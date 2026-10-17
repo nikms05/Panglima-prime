@@ -204,6 +204,7 @@ footer .fine{grid-column:1/-1;border-top:1px solid #2C3A33;padding-top:20px;font
 .paywith>span:first-child{margin-right:4px}
 .chip{background:var(--white);border:1px solid var(--line);border-radius:6px;padding:4px 10px;font-size:13px;font-weight:700;color:var(--ink)}
 .co-err{margin-top:14px;color:var(--sale);font-weight:600}
+.btn-err{margin-top:10px;color:var(--sale);font-weight:600;font-size:14px;text-align:center}
 .btn[aria-busy="true"]{opacity:.7;pointer-events:none}
 .btn[aria-busy="true"]::after{content:"";width:16px;height:16px;border-radius:50%;border:2px solid currentColor;border-right-color:transparent;animation:spin .7s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
@@ -435,7 +436,6 @@ footer .fine{grid-column:1/-1;border-top:1px solid #2C3A33;padding-top:20px;font
       <div class="plan">
         <h3 data-i="p1"></h3><div class="qty" data-i="p1q"></div>
         <div class="price"><b>$19</b><s>$25</s></div>
-        <p class="rm" data-rm="1900"></p>
         <span class="save" data-i="p1s"></span>
         <ul><li data-i="p1f1"></li><li data-i="f_ship"></li><li data-i="f_g"></li></ul>
         <button type="button" class="btn line full" data-checkout="1"><span data-i="cta_pick"></span></button>
@@ -443,7 +443,6 @@ footer .fine{grid-column:1/-1;border-top:1px solid #2C3A33;padding-top:20px;font
       <div class="plan">
         <h3 data-i="p3"></h3><div class="qty" data-i="p3q"></div>
         <div class="price"><b>$45</b><s>$75</s></div>
-        <p class="rm" data-rm="4500"></p>
         <span class="save" data-i="p3s"></span>
         <ul><li data-i="p3f1"></li><li data-i="f_free"></li><li data-i="f_g"></li></ul>
         <button type="button" class="btn line full" data-checkout="3"><span data-i="cta_pick"></span></button>
@@ -452,7 +451,6 @@ footer .fine{grid-column:1/-1;border-top:1px solid #2C3A33;padding-top:20px;font
         <span class="tag" data-i="best"></span>
         <h3 data-i="p2"></h3><div class="qty" data-i="p2q"></div>
         <div class="price"><b>$69</b><s>$125</s></div>
-        <p class="rm" data-rm="6900"></p>
         <span class="save" data-i="p2s"></span>
         <ul><li data-i="p2f1"></li><li data-i="f_free"></li><li data-i="f_g"></li><li data-i="p2f4"></li></ul>
         <button type="button" class="btn full" data-checkout="5"><span data-i="cta_pick"></span></button>
@@ -557,15 +555,15 @@ const REVIEWS = [];
 
 const T = {
 en:{
- rm_est:"About RM{v}. Pay in RM at checkout.",
- co_err:"Checkout couldn't open. Check your connection and try again.",
+
+ co_err:"Checkout is not available right now. Please try again shortly.",
  paywith:"Secure checkout:",
  announce:"Free shipping on 3 boxes or more. <b>Discreet parcel, every order.</b>",
  offer:"Launch offer: save up to 45%",
  h_title:"One strip. Ready when you are.",
  h_lead:"Panglima Prime is a Ganoderma oral strip for men that melts on your tongue in seconds. No water, no pills, no sugar. Small enough to carry in your wallet.",
  cta_order:"Order now",cta_prices:"See packages",cta_pick:"Choose this package",cta_sticky:"Order now, from $19",
- as1:"30-day money-back guarantee",as2:"Plain, unbranded parcel",as3:"Pay by card in RM or USD",
+ as1:"30-day money-back guarantee",as2:"Plain, unbranded parcel",as3:"Secure card checkout",
  f1b:"Seconds",f1:"Melts on the tongue",f2b:"No water",f2:"Take it anywhere",f3:"Sugar per strip",f4b:"30 days",f4:"Money-back guarantee",
  pain_title:"Long days take more out of you than they used to.",
  pain_bridge:"Panglima Prime is a simple, discreet way to show up at your best.",
@@ -610,7 +608,7 @@ en:{
  q3:"Is it safe?",a3:"Do not use it if you are under 18 or have a heart condition. If you have any medical condition or take medication, especially for blood pressure or your heart, ask your doctor first.",
  q4:"Will anyone know what's in the parcel?",a4:"No. Every order ships in a plain parcel with no product name on the outside.",
  q5:"How long does delivery take?",a5:"You'll receive a tracking number by email as soon as your order ships.",
- q6:"How do I pay?",a6:"By credit or debit card, Apple Pay or Google Pay on our secure checkout. Malaysian cards can choose to pay in Ringgit at the rate shown before you confirm.",
+ q6:"How do I pay?",a6:"By credit or debit card, Apple Pay or Google Pay on our secure checkout.",
  q7:"What if it doesn't work for me?",a7:"Contact us within 30 days of delivery and we'll refund your first box.",
  fin_title:"Keep a box in your wallet.",fin_sub:"Order today. Launch prices are for a limited time.",
  ft_about:"Panglima Prime is made for Rimba Botanicals LLC, 30 N Gould St Ste R, Sheridan, WY 82801, USA.",
@@ -627,15 +625,15 @@ en:{
  seal:"days",ends:"Ends in "
 },
 ms:{
- rm_est:"Lebih kurang RM{v}. Boleh bayar dalam RM di checkout.",
- co_err:"Checkout tak dapat dibuka. Semak sambungan internet dan cuba lagi.",
+
+ co_err:"Checkout belum tersedia buat masa ini. Sila cuba sebentar lagi.",
  paywith:"Checkout selamat:",
  announce:"Pos percuma untuk 3 kotak ke atas. <b>Setiap parcel dibungkus rahsia.</b>",
  offer:"Tawaran pelancaran: jimat sehingga 45%",
  h_title:"Satu strip. Sedia bila-bila masa.",
  h_lead:"Panglima Prime ialah strip Ganoderma untuk lelaki yang larut di lidah dalam beberapa saat. Tanpa air, tanpa pil, tanpa gula. Cukup kecil untuk disimpan dalam dompet.",
  cta_order:"Order sekarang",cta_prices:"Lihat pakej",cta_pick:"Pilih pakej ini",cta_sticky:"Order sekarang, dari $19",
- as1:"Jaminan wang dikembalikan 30 hari",as2:"Parcel biasa tanpa jenama",as3:"Bayar dengan kad, dalam RM atau USD",
+ as1:"Jaminan wang dikembalikan 30 hari",as2:"Parcel biasa tanpa jenama",as3:"Bayaran kad yang selamat",
  f1b:"Beberapa saat",f1:"Larut di lidah",f2b:"Tanpa air",f2:"Ambil di mana-mana",f3:"Gula setiap strip",f4b:"30 hari",f4:"Jaminan wang dikembalikan",
  pain_title:"Hari yang panjang makin memenatkan berbanding dulu.",
  pain_bridge:"Panglima Prime ialah cara mudah dan rahsia untuk anda berada di tahap terbaik.",
@@ -680,7 +678,7 @@ ms:{
  q3:"Selamat ke?",a3:"Jangan guna jika anda bawah 18 tahun atau ada masalah jantung. Jika anda ada masalah kesihatan atau sedang makan ubat, terutamanya ubat darah tinggi atau jantung, tanya doktor dahulu.",
  q4:"Orang lain tahu tak apa dalam parcel?",a4:"Tidak. Setiap pesanan dihantar dalam parcel biasa tanpa nama produk di luar.",
  q5:"Berapa lama sampai?",a5:"Anda akan terima nombor tracking melalui e-mel sebaik sahaja pesanan dipos.",
- q6:"Macam mana nak bayar?",a6:"Dengan kad kredit atau debit, Apple Pay atau Google Pay di checkout yang selamat. Kad Malaysia boleh pilih bayar dalam Ringgit pada kadar yang dipaparkan sebelum anda sahkan.",
+ q6:"Macam mana nak bayar?",a6:"Dengan kad kredit atau debit, Apple Pay atau Google Pay di checkout yang selamat.",
  q7:"Kalau tak berkesan untuk saya?",a7:"Hubungi kami dalam 30 hari selepas terima dan kami pulangkan wang untuk kotak pertama anda.",
  fin_title:"Simpan sekotak dalam dompet.",fin_sub:"Order hari ini. Harga pelancaran untuk masa terhad.",
  ft_about:"Panglima Prime dihasilkan untuk Rimba Botanicals LLC, 30 N Gould St Ste R, Sheridan, WY 82801, USA.",
@@ -697,7 +695,7 @@ ms:{
  seal:"hari",ends:"Tamat dalam "
 }};
 
-let lang = "en", usdMyr = null;
+let lang = "en";
 
 function track(ev, data){
   try{ if(window.fbq) fbq("track", ev, data||{}); }catch(_){}
@@ -712,24 +710,15 @@ function setLang(l){
   document.getElementById("sealtxt").textContent = T[l].seal;
   document.getElementById("b-en").classList.toggle("on", l === "en");
   document.getElementById("b-ms").classList.toggle("on", l === "ms");
-  renderRM(); tickPromo(); renderReviews();
+  tickPromo(); renderReviews();
 }
-
-/* ===== approximate Ringgit (display only — the exact RM amount is shown by Stripe) ===== */
-function renderRM(){
-  document.querySelectorAll("[data-rm]").forEach(el => {
-    if(!usdMyr){ el.textContent = ""; return; }
-    const rm = Math.ceil(+el.dataset.rm / 100 * usdMyr * 1.04); // includes Stripe's 2–4% conversion margin
-    el.textContent = T[lang].rm_est.replace("{v}", rm);
-  });
-}
-fetch("/api/rate").then(r => r.ok ? r.json() : null).then(j => { if(j && j.rate){ usdMyr = j.rate; renderRM(); } }).catch(()=>{});
 
 /* ===== checkout ===== */
 async function goCheckout(btn){
   const pack = +btn.dataset.checkout;
   const err = document.getElementById("co-err");
   err.hidden = true;
+  btn.parentNode.querySelectorAll(".btn-err").forEach(x => x.remove());
   btn.setAttribute("aria-busy", "true");
   track("InitiateCheckout", { content_name:"Panglima Prime", currency:"USD", value:PACKS[pack].usd, num_items:pack });
   try{
@@ -742,7 +731,10 @@ async function goCheckout(btn){
     location.href = j.url;
   }catch(e){
     btn.removeAttribute("aria-busy");
-    err.hidden = false;
+    const note = document.createElement("p");
+    note.className = "btn-err"; note.setAttribute("role","alert");
+    note.textContent = T[lang].co_err;
+    btn.insertAdjacentElement("afterend", note);
   }
 }
 document.querySelectorAll("[data-checkout]").forEach(b => b.addEventListener("click", () => goCheckout(b)));
