@@ -1,10 +1,17 @@
 // GET /api/order?session_id=cs_...  -> minimal, non-personal info for the thank-you page + Purchase pixel
 import Stripe from "stripe";
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+let _stripe = null;
+function getStripe() {
+  if (!process.env.STRIPE_SECRET_KEY) return null;
+  if (!_stripe) _stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+  return _stripe;
+}
 
 export async function GET(request) {
   const id = new URL(request.url).searchParams.get("session_id") || "";
   if (!/^cs_(test|live)_[A-Za-z0-9]+$/.test(id)) return Response.json({ ok: false }, { status: 400 });
+  const stripe = getStripe();
+  if (!stripe) return Response.json({ ok: false }, { status: 503 });
   try {
     const s = await stripe.checkout.sessions.retrieve(id);
     const conv = s.currency_conversion;

@@ -2,7 +2,12 @@
 // 1) verifies the Stripe signature  2) saves the order in Supabase  3) emails the customer + you via Resend.
 import Stripe from "stripe";
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+let _stripe = null;
+function getStripe() {
+  if (!process.env.STRIPE_SECRET_KEY) return null;
+  if (!_stripe) _stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+  return _stripe;
+}
 const WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET;
 const SUPABASE_URL = (process.env.SUPABASE_URL || "").replace(/\/$/, "");
 const SUPABASE_KEY = process.env.SUPABASE_ANON_KEY;          // public key; writes are guarded by ORDERS_SECRET
@@ -13,6 +18,8 @@ const NOTIFY_TO = process.env.ORDER_NOTIFY_EMAIL || "";
 const SUPPORT_EMAIL = process.env.SUPPORT_EMAIL || "";
 
 export async function POST(request) {
+  const stripe = getStripe();
+  if (!stripe || !WEBHOOK_SECRET) return new Response("not configured", { status: 503 });
   const raw = await request.text();
   const sig = request.headers.get("stripe-signature");
   let event;

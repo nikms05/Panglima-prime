@@ -2,7 +2,12 @@
 // Creates a Stripe Checkout Session. Prices are defined HERE (server-side) so they can't be tampered with.
 import Stripe from "stripe";
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+let _stripe = null;
+function getStripe() {
+  if (!process.env.STRIPE_SECRET_KEY) return null;
+  if (!_stripe) _stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+  return _stripe;
+}
 
 // ---- EDIT PRICES HERE (US cents) ----
 const PACKS = {
@@ -23,6 +28,8 @@ export async function POST(request) {
   try { body = await request.json(); } catch (_) {}
   const pack = PACKS[Number(body.pack)];
   if (!pack) return json({ error: "invalid_pack" }, 400);
+  const stripe = getStripe();
+  if (!stripe) return json({ error: "payments_not_configured" }, 503);
 
   const lang = body.lang === "ms" ? "ms" : "en";
   const ms = lang === "ms";
