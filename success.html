@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Order confirmed — Panglima Prime</title>
+<link href="https://fonts.googleapis.com/css2?family=Gloock&family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--paper:#F5F7F3;--line:#D3DBD2;--rimba:#12352B;--ink:#16211C;--muted:#5A6A62;--gold:#A87C25}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--paper);color:var(--ink);font:16px/1.6 "Plus Jakarta Sans",system-ui,sans-serif;min-height:100vh;display:flex;flex-direction:column}
+header{background:#fff;border-bottom:1px solid var(--line);padding:16px 20px}
+.logo{font:400 22px Gloock,Georgia,serif;color:var(--rimba);text-decoration:none}
+main{flex:1;display:grid;place-items:center;padding:40px 20px}
+.card{background:#fff;border:1px solid var(--line);border-radius:22px;padding:36px 28px;max-width:520px;width:100%;text-align:center}
+.tick{width:72px;height:72px;margin:0 auto 18px}
+h1{font:400 34px/1.1 Gloock,Georgia,serif;color:var(--rimba);margin-bottom:10px}
+p{color:var(--muted)}
+.num{display:inline-block;margin:18px 0;background:var(--paper);border:1px solid var(--line);border-radius:999px;padding:6px 16px;font-weight:700;color:var(--ink)}
+ol{text-align:left;margin:20px 0 0 20px;color:var(--muted)}
+ol li{padding:5px 0}
+.num[hidden]{display:none}
+a.back{display:inline-block;margin-top:26px;color:var(--rimba);font-weight:700}
+</style>
+</head>
+<body>
+<header><a class="logo" href="/">Panglima Prime</a></header>
+<main>
+  <div class="card">
+    <svg class="tick" viewBox="0 0 72 72" aria-hidden="true"><circle cx="36" cy="36" r="34" fill="#12352B"/><path d="m22 37 9 9 19-20" fill="none" stroke="#F1E6CB" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <h1 data-i="t"></h1>
+    <p data-i="p"></p>
+    <div class="num" id="num" hidden></div>
+    <ol>
+      <li data-i="s1"></li>
+      <li data-i="s2"></li>
+      <li data-i="s3"></li>
+    </ol>
+    <a class="back" href="/" data-i="back"></a>
+  </div>
+</main>
+<script>
+const META_PIXEL_ID = "";    // same IDs as index.html
+const TIKTOK_PIXEL_ID = "";
+const T={
+ en:{t:"Thank you. Your order is confirmed.",p:"A confirmation is on its way to your email.",n:"Order",
+     s1:"We pack your order in a plain parcel with no product name.",s2:"You'll get your tracking number by email when it ships.",s3:"Take 1 strip about 30 minutes before. No more than twice a week.",back:"Back to the store"},
+ ms:{t:"Terima kasih. Pesanan anda disahkan.",p:"E-mel pengesahan sedang dihantar kepada anda.",n:"Pesanan",
+     s1:"Kami bungkus pesanan anda dalam parcel biasa tanpa nama produk.",s2:"Nombor tracking akan dihantar melalui e-mel bila dipos.",s3:"Ambil 1 strip kira-kira 30 minit sebelum. Maksimum dua kali seminggu.",back:"Kembali ke kedai"}};
+const q=new URLSearchParams(location.search), lang=q.get("lang")==="ms"?"ms":"en";
+document.documentElement.lang=lang;
+document.querySelectorAll("[data-i]").forEach(el=>el.textContent=T[lang][el.dataset.i]);
+
+if(META_PIXEL_ID){!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init',META_PIXEL_ID);fbq('track','PageView');}
+if(TIKTOK_PIXEL_ID){!function(w,d,t){w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];ttq.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie"];ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}};for(var i=0;i<ttq.methods.length;i++)ttq.setAndDefer(ttq,ttq.methods[i]);ttq.load=function(e){var n="https://analytics.tiktok.com/i18n/pixel/events.js";ttq._i=ttq._i||{};ttq._i[e]=[];ttq._i[e]._u=n;ttq._t=ttq._t||{};ttq._t[e]=+new Date;var o=document.createElement("script");o.type="text/javascript";o.async=!0;o.src=n+"?sdkid="+e+"&lib="+t;var a=document.getElementsByTagName("script")[0];a.parentNode.insertBefore(o,a)};ttq.load(TIKTOK_PIXEL_ID);ttq.page()}(window,document,"ttq");}
+
+const sid=q.get("session_id")||"";
+if(sid){
+  fetch("/api/order?session_id="+encodeURIComponent(sid)).then(r=>r.json()).then(j=>{
+    if(!j.ok) return;
+    const n=document.getElementById("num"); n.textContent=T[lang].n+" #"+j.order; n.hidden=false;
+    const key="pp_purchase_"+sid; let done=false; try{done=!!sessionStorage.getItem(key)}catch(_){}
+    if(done) return;  // don't double-count on refresh
+    try{ if(window.fbq) fbq("track","Purchase",{value:j.value_usd,currency:"USD",num_items:j.boxes},{eventID:sid}); }catch(_){}
+    try{ if(window.ttq) ttq.track("CompletePayment",{value:j.value_usd,currency:"USD",quantity:j.boxes},{event_id:sid}); }catch(_){}
+    try{ sessionStorage.setItem(key,"1"); }catch(_){}
+  }).catch(()=>{});
+}
+</script>
+</body>
+</html>

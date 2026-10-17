@@ -1,0 +1,5 @@
+node_modules/
+.vercel/
+.env*
+_test.mjs
+_patch_landing.py

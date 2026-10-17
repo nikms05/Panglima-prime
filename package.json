@@ -1,0 +1,9 @@
+{
+  "name": "panglima-prime",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=20" },
+  "dependencies": {
+    "stripe": "^17.0.0"
+  }
+}
