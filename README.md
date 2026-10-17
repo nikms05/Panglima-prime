@@ -36,8 +36,7 @@ Pembeli → Landing page (Vercel) → Stripe Checkout (kad, RM atau USD) → Dui
 
 1. Buat projek baru (contoh: `panglima`). Plan percuma pun cukup.
 2. **SQL Editor → New query** → tampal isi `supabase/schema.sql` → **Run**.
-3. Salin **Project URL** dan **service_role key** daripada Settings → API.
-   ⚠️ Jangan letak service_role key dalam fail HTML. Ia hanya untuk Vercel.
+3. ✅ Sudah dibuat: projek **Panglima Prime**, jadual `panglima_orders`, dan fungsi tulis yang dilindungi rahsia.
 
 ## Langkah 3: GitHub + Vercel
 
@@ -50,7 +49,8 @@ Pembeli → Landing page (Vercel) → Stripe Checkout (kad, RM atau USD) → Dui
 | `STRIPE_SECRET_KEY` | `sk_test_...` (tukar ke `sk_live_...` bila live) |
 | `STRIPE_WEBHOOK_SECRET` | dari Langkah 4 |
 | `SUPABASE_URL` | `https://xxxx.supabase.co` |
-| `SUPABASE_SERVICE_ROLE_KEY` | service_role key |
+| `SUPABASE_ANON_KEY` | anon key (awam; tulisan dilindungi oleh `ORDERS_SECRET`) |
+| `ORDERS_SECRET` | rahsia dalam `private.app_secrets` (sudah diset) |
 | `RESEND_API_KEY` | dari Langkah 5 |
 | `EMAIL_FROM` | `Panglima Prime <orders@domainanda.com>` |
 | `ORDER_NOTIFY_EMAIL` | e-mel anda untuk notifikasi order baru |

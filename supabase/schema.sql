@@ -33,3 +33,12 @@ create index if not exists panglima_orders_status_idx  on public.panglima_orders
 
 -- Lock the table: only the server (service role key) can read/write. No public access.
 alter table public.panglima_orders enable row level security;
+
+-- ---------------------------------------------------------------------------
+-- Writes go through two SECURITY DEFINER functions that check a shared secret
+-- stored in private.app_secrets (not exposed via the API). The webhook calls them
+-- with the public anon key + ORDERS_SECRET, so no service-role key is needed.
+-- See migration "panglima_order_rpc" in the Supabase project for the full SQL:
+--   public.panglima_record_order(p_secret text, p_order jsonb) -> boolean (true = new)
+--   public.panglima_mark_refunded(p_secret text, p_payment_intent text)
+-- Read the secret:  select value from private.app_secrets where name = 'webhook_secret';

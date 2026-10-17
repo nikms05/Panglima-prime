@@ -5,12 +5,12 @@ import Stripe from "stripe";
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 const WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET;
 const SUPABASE_URL = (process.env.SUPABASE_URL || "").replace(/\/$/, "");
-const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
+const SUPABASE_KEY = process.env.SUPABASE_ANON_KEY;          // public key; writes are guarded by ORDERS_SECRET
+const ORDERS_SECRET = process.env.ORDERS_SECRET;
 const RESEND_KEY = process.env.RESEND_API_KEY;
 const EMAIL_FROM = process.env.EMAIL_FROM || "Panglima Prime <orders@example.com>";
 const NOTIFY_TO = process.env.ORDER_NOTIFY_EMAIL || "";
 const SUPPORT_EMAIL = process.env.SUPPORT_EMAIL || "";
-const TABLE = process.env.ORDERS_TABLE || "panglima_orders";
 
 export async function POST(request) {
   const raw = await request.text();
@@ -30,7 +30,7 @@ export async function POST(request) {
     }
     if (event.type === "charge.refunded") {
       const ch = event.data.object;
-      await sb("PATCH", `${TABLE}?payment_intent=eq.${encodeURIComponent(ch.payment_intent)}`, { status: "refunded" });
+      await rpc("panglima_mark_refunded", { p_secret: ORDERS_SECRET, p_payment_intent: ch.payment_intent });
     }
   } catch (err) {
     console.error("webhook handler error:", err.message);
@@ -66,8 +66,7 @@ async function handlePaid(s) {
   };
 
   // insert; if Stripe retries the same event, the unique session id prevents a duplicate row
-  const inserted = await sb("POST", `${TABLE}?on_conflict=stripe_session_id`, order, "return=representation,resolution=ignore-duplicates");
-  const isNew = Array.isArray(inserted) && inserted.length > 0;
+  const isNew = await rpc("panglima_record_order", { p_secret: ORDERS_SECRET, p_order: order });
   if (!isNew) return; // already processed — don't email twice
 
   await Promise.allSettled([
@@ -82,21 +81,17 @@ function pickUtm(m) {
   return out;
 }
 
-async function sb(method, path, body, prefer) {
-  if (!SUPABASE_URL || !SUPABASE_KEY) { console.warn("Supabase not configured"); return [{ skipped: true }]; }
-  const r = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
-    method,
-    headers: {
-      apikey: SUPABASE_KEY,
-      Authorization: `Bearer ${SUPABASE_KEY}`,
-      "Content-Type": "application/json",
-      Prefer: prefer || "return=minimal",
-    },
-    body: body ? JSON.stringify(body) : undefined,
+// Calls a Postgres function in Supabase. The function checks ORDERS_SECRET before writing.
+async function rpc(fn, args) {
+  if (!SUPABASE_URL || !SUPABASE_KEY || !ORDERS_SECRET) { console.warn("Supabase not configured"); return true; }
+  const r = await fetch(`${SUPABASE_URL}/rest/v1/rpc/${fn}`, {
+    method: "POST",
+    headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}`, "Content-Type": "application/json" },
+    body: JSON.stringify(args),
   });
-  if (!r.ok) throw new Error(`supabase ${method} ${r.status}: ${await r.text()}`);
+  if (!r.ok) throw new Error(`supabase ${fn} ${r.status}: ${await r.text()}`);
   const t = await r.text();
-  return t ? JSON.parse(t) : [];
+  return t ? JSON.parse(t) : null;
 }
 
 async function resend(payload) {
