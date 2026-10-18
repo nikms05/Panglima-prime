@@ -38,6 +38,7 @@ export async function POST(request) {
     if (event.type === "charge.refunded") {
       const ch = event.data.object;
       await rpc("panglima_mark_refunded", { p_secret: ORDERS_SECRET, p_payment_intent: ch.payment_intent });
+      await handleRefund(stripe, ch, event.id);
     }
   } catch (err) {
     console.error("webhook handler error:", err.message);
@@ -82,6 +83,63 @@ async function handlePaid(s) {
   ]);
 }
 
+// Refund: tell the team NOT to ship, and confirm the refund to the customer.
+async function handleRefund(stripe, ch, eventId) {
+  const pi = typeof ch.payment_intent === "string" ? ch.payment_intent : ch.payment_intent && ch.payment_intent.id;
+  let sess = null;
+  try {
+    const list = await stripe.checkout.sessions.list({ payment_intent: pi, limit: 1 });
+    sess = list.data[0] || null;
+  } catch (e) { console.error("refund: session lookup failed", e.message); }
+  const ship = (sess && ((sess.collected_information && sess.collected_information.shipping_details) || sess.shipping_details)) || {};
+  const cd = (sess && sess.customer_details) || {};
+  const r = {
+    id: sess ? sess.id.slice(-8).toUpperCase() : (pi || "").slice(-8).toUpperCase(),
+    lang: (sess && sess.metadata && sess.metadata.lang) || "en",
+    boxes: Number((sess && sess.metadata && sess.metadata.pack) || 0),
+    name: ship.name || cd.name || (ch.billing_details && ch.billing_details.name) || "",
+    email: cd.email || (ch.billing_details && ch.billing_details.email) || ch.receipt_email || "",
+    full: !!ch.refunded,
+    refunded: `${(ch.currency || "usd").toUpperCase()} ${(ch.amount_refunded / 100).toFixed(2)}`,
+    paid: `${(ch.currency || "usd").toUpperCase()} ${(ch.amount / 100).toFixed(2)}`,
+  };
+  const jobs = [];
+  if (NOTIFY_TO) {
+    const title = r.full ? `🔴 REFUNDED #${r.id} — JANGAN POS / DO NOT SHIP` : `🟠 PARTIAL REFUND #${r.id} — semak sebelum pos`;
+    const html = `<div style="font-family:Arial;font-size:15px">
+<p style="background:${r.full ? "#B42318" : "#B54708"};color:#fff;padding:12px 14px;border-radius:8px;font-weight:bold">${esc(title)}</p>
+<table cellpadding="6" style="font-size:14px;border-collapse:collapse">
+<tr><td style="color:#666">Order</td><td><b>#${esc(r.id)}</b></td></tr>
+<tr><td style="color:#666">Package</td><td><b>${r.boxes || "-"} box(es)</b></td></tr>
+<tr><td style="color:#666">Paid</td><td><b>${esc(r.paid)}</b></td></tr>
+<tr><td style="color:#666">Refunded</td><td><b>${esc(r.refunded)}</b></td></tr>
+<tr><td style="color:#666">Name</td><td><b>${esc(r.name)}</b></td></tr>
+<tr><td style="color:#666">Email</td><td><b>${esc(r.email)}</b></td></tr></table>
+<p>${r.full ? "Pesanan ini telah dibatalkan dan dipulangkan sepenuhnya. Kalau belum dipos, <b>jangan bungkus</b>. Kalau sudah dipos, maklumkan pemilik." : "Sebahagian bayaran dipulangkan. Semak dengan pemilik sebelum pos."}</p></div>`;
+    jobs.push(resend({ from: EMAIL_FROM, to: NOTIFY_TO.split(",").map((x) => x.trim()), subject: title, html }, `refund-owner-${eventId}`));
+  }
+  if (r.email) {
+    const ms = r.lang === "ms";
+    const subject = ms ? `Bayaran balik diproses — #${r.id}` : `Refund processed — #${r.id}`;
+    const body = ms
+      ? `Bayaran balik sebanyak <b>${esc(r.refunded)}</b> untuk pesanan <b>#${esc(r.id)}</b> telah diproses${r.full ? " dan pesanan anda dibatalkan" : ""}. Wang akan masuk semula ke kad anda dalam 5–10 hari bekerja, bergantung pada bank anda.`
+      : `A refund of <b>${esc(r.refunded)}</b> for order <b>#${esc(r.id)}</b> has been processed${r.full ? " and your order has been cancelled" : ""}. It will appear on your card within 5–10 business days, depending on your bank.`;
+    const html = `<!doctype html><html><body style="margin:0;background:#F3EBDD;font-family:Arial,Helvetica,sans-serif;color:#15120E">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="padding:24px 0"><tr><td align="center">
+<table role="presentation" width="560" cellpadding="0" cellspacing="0" style="max-width:560px;width:100%;background:#fff;border:1px solid #DCCFB8;border-radius:14px">
+<tr><td style="background:#15120E;color:#F3EBDD;padding:20px 28px;border-radius:14px 14px 0 0;font-size:22px;font-weight:900;letter-spacing:1px">GEAR <span style="color:#E3B85C">4</span></td></tr>
+<tr><td style="padding:28px;font-size:15px;line-height:1.6">
+<p style="font-size:18px;margin:0 0 10px"><b>${ms ? "Hai" : "Hi"}${r.name ? " " + esc(r.name.split(" ")[0]) : ""},</b></p>
+<p style="margin:0 0 16px;color:#4A4034">${body}</p>
+<p style="margin:0;color:#6B5F4F;font-size:14px">${ms ? "Ada soalan? Balas e-mel ini." : "Questions? Just reply to this email."}</p>
+</td></tr>
+<tr><td style="padding:16px 28px;border-top:1px solid #EFE6D6;font-size:12px;color:#8A7F6E">Rimba Botanicals LLC · 30 N Gould St Ste R, Sheridan, WY 82801, USA</td></tr>
+</table></td></tr></table></body></html>`;
+    jobs.push(resend({ from: EMAIL_FROM, to: [r.email], subject, html, ...(SUPPORT_EMAIL ? { reply_to: SUPPORT_EMAIL } : {}) }, `refund-cust-${eventId}`));
+  }
+  await Promise.allSettled(jobs);
+}
+
 function pickUtm(m) {
   const out = {};
   for (const k of ["utm_source", "utm_medium", "utm_campaign", "utm_content", "fbclid", "ttclid"]) if (m[k]) out[k] = m[k];
@@ -101,11 +159,11 @@ async function rpc(fn, args) {
   return t ? JSON.parse(t) : null;
 }
 
-async function resend(payload) {
+async function resend(payload, idemKey) {
   if (!RESEND_KEY) { console.warn("Resend not configured"); return; }
   const r = await fetch("https://api.resend.com/emails", {
     method: "POST",
-    headers: { Authorization: `Bearer ${RESEND_KEY}`, "Content-Type": "application/json" },
+    headers: { Authorization: `Bearer ${RESEND_KEY}`, "Content-Type": "application/json", ...(idemKey ? { "Idempotency-Key": idemKey } : {}) },
     body: JSON.stringify(payload),
   });
   if (!r.ok) console.error("resend error", r.status, await r.text());
