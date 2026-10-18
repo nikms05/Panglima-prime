@@ -337,7 +337,7 @@ footer .fine{grid-column:1/-1;border-top:1px solid #2A241C;padding-top:20px;font
           <path d="M150 357 l-6 9 h5 l-2 7 7-10 h-5 z" fill="#EBCB80"/>
           <path d="M184 368 c2-6 4-8 6-8 s4 2 6 8" stroke="#EBCB80" stroke-width="1.6" fill="none"/>
           <path d="M232 356 l7 3 v4 c0 4-3 7-7 8 c-4-1-7-4-7-8 v-4 z" fill="none" stroke="#EBCB80" stroke-width="1.6"/>
-          <text x="190" y="404" text-anchor="middle" font-family="Figtree,Arial,sans-serif" font-size="8.5" fill="#B8AC98">Ganoderma · Sugar-free · 4 strips</text>
+          <text x="190" y="404" text-anchor="middle" font-family="Figtree,Arial,sans-serif" font-size="8.5" fill="#B8AC98">Ganoderma · Sugar-free · 2 strips</text>
           <text x="190" y="432" text-anchor="middle" font-family="Figtree,Arial,sans-serif" font-size="7" fill="#7D7262" letter-spacing="1.5">RIMBA BOTANICALS</text>
         </g>
       </svg>
@@ -461,22 +461,22 @@ footer .fine{grid-column:1/-1;border-top:1px solid #2A241C;padding-top:20px;font
         <div class="price"><b>RM79</b></div>
         <span class="save" data-i="p1s"></span>
         <ul><li data-i="p1f1"></li><li data-i="f_ship"></li><li data-i="f_g"></li></ul>
-        <button type="button" class="btn dark-btn full" data-checkout="1"><span data-i="cta_pick"></span></button>
+        <button type="button" class="btn dark-btn full" data-checkout="2"><span data-i="cta_pick"></span></button>
       </div>
       <div class="plan">
         <h3 data-i="p3"></h3><div class="qty" data-i="p3q"></div>
-        <div class="price"><b>RM189</b><s>RM237</s></div>
+        <div class="price"><b>RM119</b><s>RM158</s></div>
         <span class="save" data-i="p3s"></span>
         <ul><li data-i="p3f1"></li><li data-i="f_free"></li><li data-i="f_g"></li></ul>
-        <button type="button" class="btn dark-btn full" data-checkout="3"><span data-i="cta_pick"></span></button>
+        <button type="button" class="btn dark-btn full" data-checkout="4"><span data-i="cta_pick"></span></button>
       </div>
       <div class="plan best">
         <span class="tag" data-i="best"></span>
         <h3 data-i="p2"></h3><div class="qty" data-i="p2q"></div>
-        <div class="price"><b>RM279</b><s>RM395</s></div>
+        <div class="price"><b>RM169</b><s>RM237</s></div>
         <span class="save" data-i="p2s"></span>
         <ul><li data-i="p2f1"></li><li data-i="f_free"></li><li data-i="f_g"></li><li data-i="p2f4"></li></ul>
-        <button type="button" class="btn full" data-checkout="5"><span data-i="cta_pick"></span></button>
+        <button type="button" class="btn full" data-checkout="6"><span data-i="cta_pick"></span></button>
       </div>
     </div>
     <div class="paywith">
@@ -561,7 +561,7 @@ footer .fine{grid-column:1/-1;border-top:1px solid #2A241C;padding-top:20px;font
 <script>
 /* ===================== CONFIG ===================== */
 /* Prices live on the server (api/checkout.js). These are only for ad tracking. */
-const PACKS = { 1:{rm:79}, 3:{rm:189}, 5:{rm:279} };
+const PACKS = { 2:{rm:79}, 4:{rm:119}, 6:{rm:169} };
 const META_PIXEL_ID = "";      // e.g. "123456789012345"
 const TIKTOK_PIXEL_ID = "";    // e.g. "C1ABCDEF..."
 /* Real promo end date, e.g. "2026-11-30T23:59:00+08:00". Empty = no countdown. Never fake it. */
@@ -573,7 +573,7 @@ const REVIEWS = [];
 
 const T = {
 en:{
- announce:"Free shipping on 3 boxes or more · Plain, discreet parcel on every order",
+ announce:"Free shipping across Malaysia · Every parcel packed discreetly",
  offer:"Buy more, save up to 29%",
  h1a:"Shift into", h1b:"Gear 4.",
  h_lead:"A Ganoderma oral strip for men that melts on your tongue in seconds. No water, no pills, no sugar. Small enough to keep in your wallet.",
@@ -606,11 +606,11 @@ en:{
  vs3:"Carrying it", vs3a:"Fits in a wallet", vs3b:"A bottle in your bag",
  vs4:"Discretion", vs4a:"Nobody notices", vs4b:"Easy to spot",
  vs5:"Sugar", vs5a:"0 g", vs5b:"Often has fillers",
- pr_title:"Pick your gear", pr_sub:"Each box holds 4 strips. The 5-box pack is the best value — RM13.95 per strip.",
- p1:"Try it", p1q:"1 box, 4 strips", p1s:"RM19.75 per strip", p1f1:"4 strips",
- p3:"Regular", p3q:"3 boxes, 12 strips", p3s:"Save RM48", p3f1:"12 strips, RM15.75 each",
- p2:"Full power", p2q:"5 boxes, 20 strips", p2s:"Save RM116", p2f1:"20 strips, RM13.95 each", p2f4:"Priority dispatch",
- best:"Best value", f_ship:"Shipping RM9.90", f_free:"Free shipping", f_g:"30-day guarantee",
+ pr_title:"Pick your gear", pr_sub:"Each box holds 2 strips. Free shipping on every pack. The 6-box pack is the best value — RM14.08 per strip.",
+ p1:"Try it", p1q:"2 boxes, 4 strips", p1s:"RM19.75 per strip", p1f1:"4 strips",
+ p3:"Regular", p3q:"4 boxes, 8 strips", p3s:"Save RM39", p3f1:"8 strips, RM14.88 each",
+ p2:"Full power", p2q:"6 boxes, 12 strips", p2s:"Save RM68", p2f1:"12 strips, RM14.08 each", p2f4:"Priority dispatch",
+ best:"Best value", f_ship:"Free shipping", f_free:"Free shipping", f_g:"30-day guarantee",
  paywith:"Secure checkout:",
  co_err:"Checkout is not available right now. Please try again shortly.",
  g_title:"Try it. Not for you? Money back.",
@@ -631,7 +631,7 @@ en:{
  seal:"days", ends:"Ends in "
 },
 ms:{
- announce:"Pos percuma untuk 3 kotak ke atas · Setiap parcel dibungkus rahsia",
+ announce:"Pos percuma seluruh Malaysia · Setiap parcel dibungkus rahsia",
  offer:"Beli lebih, jimat sehingga 29%",
  h1a:"Masuk", h1b:"Gear 4.",
  h_lead:"Strip Ganoderma untuk lelaki yang larut di lidah dalam beberapa saat. Tanpa air, tanpa pil, tanpa gula. Cukup kecil untuk disimpan dalam dompet.",
@@ -664,11 +664,11 @@ ms:{
  vs3:"Membawanya", vs3a:"Muat dalam dompet", vs3b:"Botol dalam beg",
  vs4:"Rahsia", vs4a:"Tiada siapa perasan", vs4b:"Mudah dikesan",
  vs5:"Gula", vs5a:"0 g", vs5b:"Selalunya ada pengisi",
- pr_title:"Pilih gear anda", pr_sub:"Setiap kotak ada 4 strip. Pakej 5 kotak paling jimat — RM13.95 setiap strip.",
- p1:"Cuba dulu", p1q:"1 kotak, 4 strip", p1s:"RM19.75 setiap strip", p1f1:"4 strip",
- p3:"Biasa", p3q:"3 kotak, 12 strip", p3s:"Jimat RM48", p3f1:"12 strip, RM15.75 setiap satu",
- p2:"Kuasa penuh", p2q:"5 kotak, 20 strip", p2s:"Jimat RM116", p2f1:"20 strip, RM13.95 setiap satu", p2f4:"Dihantar dahulu",
- best:"Paling jimat", f_ship:"Pos RM9.90", f_free:"Pos percuma", f_g:"Jaminan 30 hari",
+ pr_title:"Pilih gear anda", pr_sub:"Setiap kotak ada 2 strip. Pos percuma untuk semua pakej. Pakej 6 kotak paling jimat — RM14.08 setiap strip.",
+ p1:"Cuba dulu", p1q:"2 kotak, 4 strip", p1s:"RM19.75 setiap strip", p1f1:"4 strip",
+ p3:"Biasa", p3q:"4 kotak, 8 strip", p3s:"Jimat RM39", p3f1:"8 strip, RM14.88 setiap satu",
+ p2:"Kuasa penuh", p2q:"6 kotak, 12 strip", p2s:"Jimat RM68", p2f1:"12 strip, RM14.08 setiap satu", p2f4:"Dihantar dahulu",
+ best:"Paling jimat", f_ship:"Pos percuma", f_free:"Pos percuma", f_g:"Jaminan 30 hari",
  paywith:"Checkout selamat:",
  co_err:"Checkout belum tersedia buat masa ini. Sila cuba sebentar lagi.",
  g_title:"Cuba dulu. Tak sesuai? Wang dipulangkan.",

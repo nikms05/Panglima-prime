@@ -11,12 +11,12 @@ function getStripe() {
 
 // ---- EDIT PRICES HERE (sen, MYR). Charged in RM; Stripe converts and pays out USD to Mercury ----
 const PACKS = {
-  1: { boxes: 1, cents: 7900 },   // RM79
-  3: { boxes: 3, cents: 18900 },  // RM189
-  5: { boxes: 5, cents: 27900 },  // RM279
+  2: { boxes: 2, cents: 7900 },   // RM79  — 4 strips
+  4: { boxes: 4, cents: 11900 },  // RM119 — 8 strips
+  6: { boxes: 6, cents: 16900 },  // RM169 — 12 strips
 };
 const SHIPPING_CENTS = 990;      // RM9.90 shipping for orders under FREE_SHIP_FROM boxes
-const FREE_SHIP_FROM = 3;
+const FREE_SHIP_FROM = 0;
 const PRODUCT_IMAGE = process.env.PRODUCT_IMAGE_URL || ""; // optional https URL of the box photo
 // -------------------------------------
 
@@ -53,8 +53,8 @@ export async function POST(request) {
         unit_amount: pack.cents,
         product_data: {
           name: ms
-            ? `Gear 4 Oral Strip — ${pack.boxes} kotak (${pack.boxes * 4} strip)`
-            : `Gear 4 Oral Strip — ${pack.boxes} box${pack.boxes > 1 ? "es" : ""} (${pack.boxes * 4} strips)`,
+            ? `Gear 4 Oral Strip — ${pack.boxes} kotak (${pack.boxes * 2} strip)`
+            : `Gear 4 Oral Strip — ${pack.boxes} box${pack.boxes > 1 ? "es" : ""} (${pack.boxes * 2} strips)`,
           ...(PRODUCT_IMAGE ? { images: [PRODUCT_IMAGE] } : {}),
         },
       },
