@@ -698,7 +698,7 @@ function track(ev, data){
 
 function setLang(l){
   lang = l;
-  try{ localStorage.setItem("g4_lang", l); }catch(e){}
+  try{ localStorage.setItem("g4_lang_v2", l); }catch(e){}
   document.documentElement.lang = l === "ms" ? "ms" : "en";
   document.querySelectorAll("[data-i]").forEach(el => { const v = T[l][el.dataset.i]; if(v !== undefined) el.innerHTML = v; });
   document.getElementById("sealtxt").textContent = T[l].seal;
@@ -766,7 +766,7 @@ if("IntersectionObserver" in window){ new IntersectionObserver((es,o)=>{ es.forE
 
 /* ===== init ===== */
 document.getElementById("yr").textContent = new Date().getFullYear();
-let saved = null; try{ saved = localStorage.getItem("g4_lang"); }catch(e){}
+let saved = null; try{ saved = localStorage.getItem("g4_lang_v2"); }catch(e){}
 const qp = (new URLSearchParams(location.search).get("lang")||"").toLowerCase();
 setLang(qp==="ms"||qp==="bm" ? "ms" : qp==="en" ? "en" : (saved||"ms"));
 </script>
