@@ -9,13 +9,13 @@ function getStripe() {
   return _stripe;
 }
 
-// ---- EDIT PRICES HERE (US cents) ----
+// ---- EDIT PRICES HERE (sen, MYR). Charged in RM; Stripe converts and pays out USD to Mercury ----
 const PACKS = {
-  1: { boxes: 1, cents: 1900 },
-  3: { boxes: 3, cents: 4500 },
-  5: { boxes: 5, cents: 6900 },
+  1: { boxes: 1, cents: 7900 },   // RM79
+  3: { boxes: 3, cents: 18900 },  // RM189
+  5: { boxes: 5, cents: 27900 },  // RM279
 };
-const SHIPPING_CENTS = 995;      // shipping for orders under FREE_SHIP_FROM boxes
+const SHIPPING_CENTS = 990;      // RM9.90 shipping for orders under FREE_SHIP_FROM boxes
 const FREE_SHIP_FROM = 3;
 const PRODUCT_IMAGE = process.env.PRODUCT_IMAGE_URL || ""; // optional https URL of the box photo
 // -------------------------------------
@@ -49,7 +49,7 @@ export async function POST(request) {
     line_items: [{
       quantity: 1,
       price_data: {
-        currency: "usd",
+        currency: "myr",
         unit_amount: pack.cents,
         product_data: {
           name: ms
@@ -63,7 +63,7 @@ export async function POST(request) {
     shipping_options: [{
       shipping_rate_data: {
         type: "fixed_amount",
-        fixed_amount: { amount: freeShip ? 0 : SHIPPING_CENTS, currency: "usd" },
+        fixed_amount: { amount: freeShip ? 0 : SHIPPING_CENTS, currency: "myr" },
         display_name: freeShip
           ? (ms ? "Pos percuma (parcel rahsia)" : "Free shipping (discreet parcel)")
           : (ms ? "Pos standard (parcel rahsia)" : "Standard shipping (discreet parcel)"),
@@ -82,7 +82,6 @@ export async function POST(request) {
     payment_intent_data: { metadata: { pack: String(pack.boxes), lang } },
     success_url: `${origin}/success.html?session_id={CHECKOUT_SESSION_ID}&lang=${lang}`,
     cancel_url: `${origin}/?lang=${lang}#pricing`,
-    adaptive_pricing: { enabled: true }, // lets Malaysian buyers pay in MYR; you still settle in USD
   };
 
   try {
@@ -91,7 +90,7 @@ export async function POST(request) {
   } catch (err) {
     // If the account can't use one of the optional settings, retry with the plain essentials.
     try {
-      const { adaptive_pricing, payment_intent_data, ...basic } = params;
+      const { payment_intent_data, ...basic } = params;
       const session = await stripe.checkout.sessions.create(basic);
       console.warn("checkout: retried without optional params:", err.message);
       return json({ url: session.url });

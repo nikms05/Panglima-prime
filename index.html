@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="ms">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -458,14 +458,14 @@ footer .fine{grid-column:1/-1;border-top:1px solid #2A241C;padding-top:20px;font
     <div class="plans">
       <div class="plan">
         <h3 data-i="p1"></h3><div class="qty" data-i="p1q"></div>
-        <div class="price"><b>$19</b><s>$25</s></div>
+        <div class="price"><b>RM79</b></div>
         <span class="save" data-i="p1s"></span>
         <ul><li data-i="p1f1"></li><li data-i="f_ship"></li><li data-i="f_g"></li></ul>
         <button type="button" class="btn dark-btn full" data-checkout="1"><span data-i="cta_pick"></span></button>
       </div>
       <div class="plan">
         <h3 data-i="p3"></h3><div class="qty" data-i="p3q"></div>
-        <div class="price"><b>$45</b><s>$75</s></div>
+        <div class="price"><b>RM189</b><s>RM237</s></div>
         <span class="save" data-i="p3s"></span>
         <ul><li data-i="p3f1"></li><li data-i="f_free"></li><li data-i="f_g"></li></ul>
         <button type="button" class="btn dark-btn full" data-checkout="3"><span data-i="cta_pick"></span></button>
@@ -473,7 +473,7 @@ footer .fine{grid-column:1/-1;border-top:1px solid #2A241C;padding-top:20px;font
       <div class="plan best">
         <span class="tag" data-i="best"></span>
         <h3 data-i="p2"></h3><div class="qty" data-i="p2q"></div>
-        <div class="price"><b>$69</b><s>$125</s></div>
+        <div class="price"><b>RM279</b><s>RM395</s></div>
         <span class="save" data-i="p2s"></span>
         <ul><li data-i="p2f1"></li><li data-i="f_free"></li><li data-i="f_g"></li><li data-i="p2f4"></li></ul>
         <button type="button" class="btn full" data-checkout="5"><span data-i="cta_pick"></span></button>
@@ -561,7 +561,7 @@ footer .fine{grid-column:1/-1;border-top:1px solid #2A241C;padding-top:20px;font
 <script>
 /* ===================== CONFIG ===================== */
 /* Prices live on the server (api/checkout.js). These are only for ad tracking. */
-const PACKS = { 1:{usd:19}, 3:{usd:45}, 5:{usd:69} };
+const PACKS = { 1:{rm:79}, 3:{rm:189}, 5:{rm:279} };
 const META_PIXEL_ID = "";      // e.g. "123456789012345"
 const TIKTOK_PIXEL_ID = "";    // e.g. "C1ABCDEF..."
 /* Real promo end date, e.g. "2026-11-30T23:59:00+08:00". Empty = no countdown. Never fake it. */
@@ -574,14 +574,14 @@ const REVIEWS = [];
 const T = {
 en:{
  announce:"Free shipping on 3 boxes or more · Plain, discreet parcel on every order",
- offer:"Launch offer: save up to 45%",
+ offer:"Buy more, save up to 29%",
  h1a:"Shift into", h1b:"Gear 4.",
  h_lead:"A Ganoderma oral strip for men that melts on your tongue in seconds. No water, no pills, no sugar. Small enough to keep in your wallet.",
- cta_order:"Order now", cta_how:"How it works", cta_pick:"Choose this package", cta_sticky:"Order now, from $19",
+ cta_order:"Order now", cta_how:"How it works", cta_pick:"Choose this package", cta_sticky:"Order now, from RM79",
  as1:"30-day money-back guarantee", as2:"Plain, unbranded parcel", as3:"Secure card checkout",
  f1b:"Seconds", f1:"Melts on the tongue", f2b:"No water", f2:"Take it anywhere", f3:"Sugar per strip", f4b:"30 days", f4:"Money-back guarantee",
  pain_title:"Stuck in a low gear?", pain_sub:"Long days wear you down. Most men just push through.",
- pn1t:"Drained by evening", pn1p:"Work, traffic and family leave little energy for anything else.",
+ pn1t:"Drained by end of day", pn1p:"Work, traffic and family leave little energy for anything else.",
  pn2t:"Not like your twenties", pn2p:"The drive is still there. The stamina doesn't always keep up.",
  pn3t:"Tired of pills", pn3p:"Bottles of capsules are a hassle to carry and easy for others to notice.",
  pain_bridge:"Gear 4 is the discreet, one-strip way to show up at your best.",
@@ -606,11 +606,11 @@ en:{
  vs3:"Carrying it", vs3a:"Fits in a wallet", vs3b:"A bottle in your bag",
  vs4:"Discretion", vs4a:"Nobody notices", vs4b:"Easy to spot",
  vs5:"Sugar", vs5a:"0 g", vs5b:"Often has fillers",
- pr_title:"Pick your gear", pr_sub:"Each box holds 2 strips. Most men go for 5 boxes — the lowest price per strip.",
- p1:"Try it", p1q:"1 box, 2 strips", p1s:"Save $6", p1f1:"2 strips",
- p3:"Regular", p3q:"3 boxes, 6 strips", p3s:"Save $30", p3f1:"6 strips, $7.50 each",
- p2:"Full power", p2q:"5 boxes, 10 strips", p2s:"Save $56", p2f1:"10 strips, $6.90 each", p2f4:"Priority dispatch",
- best:"Best value", f_ship:"Shipping $9.95", f_free:"Free shipping", f_g:"30-day guarantee",
+ pr_title:"Pick your gear", pr_sub:"Each box holds 2 strips. The 5-box pack is the best value — RM27.90 per strip.",
+ p1:"Try it", p1q:"1 box, 2 strips", p1s:"RM39.50 per strip", p1f1:"2 strips",
+ p3:"Regular", p3q:"3 boxes, 6 strips", p3s:"Save RM48", p3f1:"6 strips, RM31.50 each",
+ p2:"Full power", p2q:"5 boxes, 10 strips", p2s:"Save RM116", p2f1:"10 strips, RM27.90 each", p2f4:"Priority dispatch",
+ best:"Best value", f_ship:"Shipping RM9.90", f_free:"Free shipping", f_g:"30-day guarantee",
  paywith:"Secure checkout:",
  co_err:"Checkout is not available right now. Please try again shortly.",
  g_title:"Try it. Not for you? Money back.",
@@ -632,14 +632,14 @@ en:{
 },
 ms:{
  announce:"Pos percuma untuk 3 kotak ke atas · Setiap parcel dibungkus rahsia",
- offer:"Tawaran pelancaran: jimat sehingga 45%",
+ offer:"Beli lebih, jimat sehingga 29%",
  h1a:"Masuk", h1b:"Gear 4.",
  h_lead:"Strip Ganoderma untuk lelaki yang larut di lidah dalam beberapa saat. Tanpa air, tanpa pil, tanpa gula. Cukup kecil untuk disimpan dalam dompet.",
- cta_order:"Order sekarang", cta_how:"Cara guna", cta_pick:"Pilih pakej ini", cta_sticky:"Order sekarang, dari $19",
+ cta_order:"Order sekarang", cta_how:"Cara guna", cta_pick:"Pilih pakej ini", cta_sticky:"Order sekarang, dari RM79",
  as1:"Jaminan wang dikembalikan 30 hari", as2:"Parcel biasa tanpa jenama", as3:"Bayaran kad yang selamat",
  f1b:"Saat", f1:"Larut di lidah", f2b:"Tanpa air", f2:"Ambil di mana-mana", f3:"Gula setiap strip", f4b:"30 hari", f4:"Jaminan wang dikembalikan",
  pain_title:"Tersangkut gear rendah?", pain_sub:"Hari yang panjang memang memenatkan. Kebanyakan lelaki cuma tahan.",
- pn1t:"Habis tenaga bila malam", pn1p:"Kerja, jem dan urusan keluarga tinggalkan sedikit sahaja tenaga.",
+ pn1t:"Habis tenaga hujung hari", pn1p:"Kerja, jem dan urusan keluarga tinggalkan sedikit sahaja tenaga.",
  pn2t:"Tak macam umur 20-an", pn2p:"Semangat masih ada. Stamina pula tak selalu dapat ikut.",
  pn3t:"Bosan telan pil", pn3p:"Botol kapsul leceh dibawa dan mudah orang lain perasan.",
  pain_bridge:"Gear 4 — satu strip, rahsia, untuk anda berada di tahap terbaik.",
@@ -664,11 +664,11 @@ ms:{
  vs3:"Membawanya", vs3a:"Muat dalam dompet", vs3b:"Botol dalam beg",
  vs4:"Rahsia", vs4a:"Tiada siapa perasan", vs4b:"Mudah dikesan",
  vs5:"Gula", vs5a:"0 g", vs5b:"Selalunya ada pengisi",
- pr_title:"Pilih gear anda", pr_sub:"Setiap kotak ada 2 strip. Kebanyakan lelaki ambil 5 kotak — harga paling rendah setiap strip.",
- p1:"Cuba dulu", p1q:"1 kotak, 2 strip", p1s:"Jimat $6", p1f1:"2 strip",
- p3:"Biasa", p3q:"3 kotak, 6 strip", p3s:"Jimat $30", p3f1:"6 strip, $7.50 setiap satu",
- p2:"Kuasa penuh", p2q:"5 kotak, 10 strip", p2s:"Jimat $56", p2f1:"10 strip, $6.90 setiap satu", p2f4:"Dihantar dahulu",
- best:"Paling jimat", f_ship:"Pos $9.95", f_free:"Pos percuma", f_g:"Jaminan 30 hari",
+ pr_title:"Pilih gear anda", pr_sub:"Setiap kotak ada 2 strip. Pakej 5 kotak paling jimat — RM27.90 setiap strip.",
+ p1:"Cuba dulu", p1q:"1 kotak, 2 strip", p1s:"RM39.50 setiap strip", p1f1:"2 strip",
+ p3:"Biasa", p3q:"3 kotak, 6 strip", p3s:"Jimat RM48", p3f1:"6 strip, RM31.50 setiap satu",
+ p2:"Kuasa penuh", p2q:"5 kotak, 10 strip", p2s:"Jimat RM116", p2f1:"10 strip, RM27.90 setiap satu", p2f4:"Dihantar dahulu",
+ best:"Paling jimat", f_ship:"Pos RM9.90", f_free:"Pos percuma", f_g:"Jaminan 30 hari",
  paywith:"Checkout selamat:",
  co_err:"Checkout belum tersedia buat masa ini. Sila cuba sebentar lagi.",
  g_title:"Cuba dulu. Tak sesuai? Wang dipulangkan.",
@@ -713,7 +713,7 @@ async function goCheckout(btn){
   const pack = +btn.dataset.checkout;
   btn.parentNode.querySelectorAll(".btn-err").forEach(x => x.remove());
   btn.setAttribute("aria-busy", "true");
-  track("InitiateCheckout", { content_name:"Gear 4", currency:"USD", value:PACKS[pack].usd, num_items:pack });
+  track("InitiateCheckout", { content_name:"Gear 4", currency:"MYR", value:PACKS[pack].rm, num_items:pack });
   try{
     const qs = new URLSearchParams(location.search);
     const utm = {};
@@ -762,13 +762,13 @@ if(TIKTOK_PIXEL_ID){
   !function(w,d,t){w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];ttq.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie"];ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}};for(var i=0;i<ttq.methods.length;i++)ttq.setAndDefer(ttq,ttq.methods[i]);ttq.load=function(e){var n="https://analytics.tiktok.com/i18n/pixel/events.js";ttq._i=ttq._i||{};ttq._i[e]=[];ttq._i[e]._u=n;ttq._t=ttq._t||{};ttq._t[e]=+new Date;var o=document.createElement("script");o.type="text/javascript";o.async=!0;o.src=n+"?sdkid="+e+"&lib="+t;var a=document.getElementsByTagName("script")[0];a.parentNode.insertBefore(o,a)};ttq.load(TIKTOK_PIXEL_ID);ttq.page()}(window,document,"ttq");
 }
 const pr = document.getElementById("pricing"); let vc = false;
-if("IntersectionObserver" in window){ new IntersectionObserver((es,o)=>{ es.forEach(e=>{ if(e.isIntersecting && !vc){ vc=true; track("ViewContent",{content_name:"Gear 4",currency:"USD",value:19}); o.disconnect(); } }); },{threshold:.3}).observe(pr); }
+if("IntersectionObserver" in window){ new IntersectionObserver((es,o)=>{ es.forEach(e=>{ if(e.isIntersecting && !vc){ vc=true; track("ViewContent",{content_name:"Gear 4",currency:"MYR",value:79}); o.disconnect(); } }); },{threshold:.3}).observe(pr); }
 
 /* ===== init ===== */
 document.getElementById("yr").textContent = new Date().getFullYear();
 let saved = null; try{ saved = localStorage.getItem("g4_lang"); }catch(e){}
 const qp = (new URLSearchParams(location.search).get("lang")||"").toLowerCase();
-setLang(qp==="ms"||qp==="bm" ? "ms" : qp==="en" ? "en" : (saved||"en"));
+setLang(qp==="ms"||qp==="bm" ? "ms" : qp==="en" ? "en" : (saved||"ms"));
 </script>
 </body>
 </html>

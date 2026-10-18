@@ -62,8 +62,8 @@ if(sid){
     const n=document.getElementById("num"); n.textContent=T[lang].n+" #"+j.order; n.hidden=false;
     const key="pp_purchase_"+sid; let done=false; try{done=!!sessionStorage.getItem(key)}catch(_){}
     if(done) return;  // don't double-count on refresh
-    try{ if(window.fbq) fbq("track","Purchase",{value:j.value_usd,currency:"USD",num_items:j.boxes},{eventID:sid}); }catch(_){}
-    try{ if(window.ttq) ttq.track("CompletePayment",{value:j.value_usd,currency:"USD",quantity:j.boxes},{event_id:sid}); }catch(_){}
+    try{ if(window.fbq) fbq("track","Purchase",{value:j.value,currency:j.currency||"MYR",num_items:j.boxes},{eventID:sid}); }catch(_){}
+    try{ if(window.ttq) ttq.track("CompletePayment",{value:j.value,currency:j.currency||"MYR",quantity:j.boxes},{event_id:sid}); }catch(_){}
     try{ sessionStorage.setItem(key,"1"); }catch(_){}
   }).catch(()=>{});
 }

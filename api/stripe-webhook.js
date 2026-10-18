@@ -51,14 +51,14 @@ async function handlePaid(s) {
   const ship = (s.collected_information && s.collected_information.shipping_details) || s.shipping_details || {};
   const a = ship.address || {};
   const cd = s.customer_details || {};
-  const conv = s.currency_conversion || null; // present when the buyer paid in MYR (Adaptive Pricing)
+  const piId = typeof s.payment_intent === "string" ? s.payment_intent : (s.payment_intent && s.payment_intent.id) || null;
   const order = {
     stripe_session_id: s.id,
-    payment_intent: typeof s.payment_intent === "string" ? s.payment_intent : (s.payment_intent && s.payment_intent.id) || null,
+    payment_intent: piId,
     status: "paid",
     pack_boxes: Number((s.metadata && s.metadata.pack) || 0),
     lang: (s.metadata && s.metadata.lang) || "en",
-    amount_usd: conv ? conv.amount_total / 100 : (s.currency === "usd" ? s.amount_total / 100 : null),
+    amount_usd: await usdAmount(s, piId),
     amount_paid: s.amount_total / 100,
     currency_paid: (s.currency || "").toUpperCase(),
     customer_name: ship.name || cd.name || null,
@@ -100,8 +100,8 @@ async function handleRefund(stripe, ch, eventId) {
     name: ship.name || cd.name || (ch.billing_details && ch.billing_details.name) || "",
     email: cd.email || (ch.billing_details && ch.billing_details.email) || ch.receipt_email || "",
     full: !!ch.refunded,
-    refunded: `${(ch.currency || "usd").toUpperCase()} ${(ch.amount_refunded / 100).toFixed(2)}`,
-    paid: `${(ch.currency || "usd").toUpperCase()} ${(ch.amount / 100).toFixed(2)}`,
+    refunded: fmt(ch.currency, ch.amount_refunded),
+    paid: fmt(ch.currency, ch.amount),
   };
   const jobs = [];
   if (NOTIFY_TO) {
@@ -140,6 +140,19 @@ async function handleRefund(stripe, ch, eventId) {
   await Promise.allSettled(jobs);
 }
 
+// What Stripe actually settles in USD (the order is charged in RM and converted by Stripe).
+async function usdAmount(s, piId) {
+  if (s.currency === "usd") return s.amount_total / 100;
+  try {
+    const pi = await getStripe().paymentIntents.retrieve(piId, { expand: ["latest_charge.balance_transaction"] });
+    const bt = pi.latest_charge && pi.latest_charge.balance_transaction;
+    if (bt && bt.currency === "usd") return bt.amount / 100;
+  } catch (e) { console.warn("usd amount lookup failed:", e.message); }
+  return null;
+}
+
+const fmt = (cur, cents) => { const c = (cur || "").toUpperCase(); const v = (cents / 100).toFixed(2); return c === "MYR" ? `RM${v}` : c === "USD" ? `US$${v}` : `${c} ${v}`; };
+
 function pickUtm(m) {
   const out = {};
   for (const k of ["utm_source", "utm_medium", "utm_campaign", "utm_content", "fbclid", "ttclid"]) if (m[k]) out[k] = m[k];
@@ -170,7 +183,7 @@ async function resend(payload, idemKey) {
 }
 
 const esc = (v) => String(v == null ? "" : v).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
-const money = (o) => o.currency_paid === "USD" || !o.currency_paid ? `US$${o.amount_paid.toFixed(2)}` : `${o.currency_paid} ${o.amount_paid.toFixed(2)}`;
+const money = (o) => fmt(o.currency_paid || "usd", Math.round(o.amount_paid * 100));
 const shortId = (o) => o.stripe_session_id.slice(-8).toUpperCase();
 
 function sendCustomerEmail(o) {
@@ -217,7 +230,7 @@ function sendCustomerEmail(o) {
 function sendOwnerEmail(o) {
   const rows = [
     ["Order", "#" + shortId(o)], ["Package", `${o.pack_boxes} box(es)`], ["Paid", money(o)],
-    ["USD", o.amount_usd != null ? "$" + o.amount_usd.toFixed(2) : "-"],
+    ["Settles (USD)", o.amount_usd != null ? "$" + o.amount_usd.toFixed(2) : "-"],
     ["Name", o.customer_name], ["Phone", o.phone], ["Email", o.email],
     ["Address", [o.address_line1, o.address_line2, o.postcode, o.city, o.state, o.country].filter(Boolean).join(", ")],
     ["Source", Object.entries(o.utm || {}).map(([k, v]) => `${k}=${v}`).join(" ") || "-"],
