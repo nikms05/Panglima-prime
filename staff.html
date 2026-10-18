@@ -60,11 +60,12 @@ button,input,select,.no,.pack,.logo,.login h1{font-family:Figtree,system-ui,sans
 </style>
 </head>
 <body>
-<header><span class="logo">GEAR <i>4</i> · ORDERS</span><button id="logout" hidden>Log keluar</button></header>
+<header><span class="logo">GEAR <i>4</i> · ORDERS</span><span><small id="who" style="color:#BFB29C;margin-right:8px"></small><button id="logout" hidden>Log keluar</button></span></header>
 <main>
   <form class="login" id="login">
     <h1>Log masuk staff</h1>
-    <p>Masukkan kata laluan staff untuk lihat order.</p>
+    <p>Masukkan nama pengguna dan kata laluan.</p>
+    <input id="user" type="text" autocomplete="username" autocapitalize="none" placeholder="Nama pengguna" required style="margin-bottom:10px">
     <input id="pw" type="password" autocomplete="current-password" placeholder="Kata laluan" required>
     <button class="btn" id="loginBtn">Masuk</button>
     <div class="err" id="loginErr"></div>
@@ -85,9 +86,7 @@ button,input,select,.no,.pack,.logo,.login h1{font-family:Figtree,system-ui,sans
 
 <script>
 const $ = (s, el = document) => el.querySelector(s);
-let KEY = ""; try { KEY = localStorage.getItem("g4_staff") || ""; } catch (_) {}
-// One-tap access link: gear4.my/staff.html#k=KEY  (the #part never reaches the server or logs)
-{ const m = location.hash.match(/k=([^&]+)/); if (m) { KEY = decodeURIComponent(m[1]); try { localStorage.setItem("g4_staff", KEY); } catch (_) {} history.replaceState(null, "", location.pathname); } }
+let TOKEN = ""; try { TOKEN = localStorage.getItem("g4_token") || ""; } catch (_) {}
 let STATUS = "paid", COURIERS = [], LAST_COURIER = "";
 try { LAST_COURIER = localStorage.getItem("g4_courier") || ""; } catch (_) {}
 
@@ -96,7 +95,7 @@ const toast = (m) => { const t = $("#toast"); t.textContent = m; t.classList.add
 const fmtDate = (s) => new Date(s).toLocaleString("ms-MY", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" });
 
 async function api(path, opts = {}) {
-  const r = await fetch(path, { ...opts, headers: { "Content-Type": "application/json", "x-staff-key": KEY, ...(opts.headers || {}) } });
+  const r = await fetch(path, { ...opts, headers: { "Content-Type": "application/json", ...(TOKEN ? { Authorization: "Bearer " + TOKEN } : {}), ...(opts.headers || {}) } });
   if (r.status === 401) { logout(); throw new Error("unauthorized"); }
   const j = await r.json().catch(() => ({}));
   if (!r.ok) throw Object.assign(new Error(j.error || "error"), { body: j });
@@ -104,13 +103,21 @@ async function api(path, opts = {}) {
 }
 
 function showApp(on) { $("#login").hidden = on; $("#app").hidden = !on; $("#logout").hidden = !on; }
-function logout() { KEY = ""; try { localStorage.removeItem("g4_staff"); } catch (_) {} showApp(false); }
+function logout() { TOKEN = ""; try { localStorage.removeItem("g4_token"); } catch (_) {} $("#who").textContent = ""; showApp(false); }
 
 $("#login").addEventListener("submit", async (e) => {
   e.preventDefault();
-  KEY = $("#pw").value.trim(); $("#loginErr").textContent = ""; $("#loginBtn").disabled = true;
-  try { await load(); try { localStorage.setItem("g4_staff", KEY); } catch (_) {} showApp(true); }
-  catch (err) { $("#loginErr").textContent = err.message === "unauthorized" ? "Kata laluan salah." : "Ralat sambungan. Cuba lagi."; }
+  $("#loginErr").textContent = ""; $("#loginBtn").disabled = true;
+  try {
+    const r = await fetch("/api/staff", { method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action: "login", username: $("#user").value.trim(), password: $("#pw").value }) });
+    const j = await r.json().catch(() => ({}));
+    if (r.status === 429) throw new Error("Terlalu banyak cubaan salah. Cuba lagi selepas 15 minit.");
+    if (!r.ok || !j.token) throw new Error(r.status === 401 ? `Nama pengguna atau kata laluan salah.${j.left != null ? " Baki cubaan: " + j.left : ""}` : "Ralat sambungan. Cuba lagi.");
+    TOKEN = j.token; try { localStorage.setItem("g4_token", TOKEN); } catch (_) {}
+    $("#pw").value = "";
+    await load(); showApp(true);
+  } catch (err) { $("#loginErr").textContent = err.message; }
   finally { $("#loginBtn").disabled = false; }
 });
 $("#logout").onclick = logout;
@@ -125,6 +132,7 @@ async function load() {
   $("#info").textContent = "Memuatkan…";
   const j = await api("/api/staff?status=" + STATUS);
   COURIERS = j.couriers || COURIERS;
+  if (j.user) $("#who").textContent = j.user;
   render(j.orders || []);
   if (STATUS === "paid") $("#c-paid").textContent = j.orders.length;
 }
@@ -146,7 +154,7 @@ function render(orders) {
     const tel = (o.phone || "").replace(/[^\d+]/g, "");
     let foot = "";
     if (o.status === "refunded") foot = `<div class="stop">⛔ DAH REFUND — JANGAN POS</div>`;
-    else foot = `${o.status === "shipped" ? `<div class="done">✓ Dipos ${o.shipped_at ? fmtDate(o.shipped_at) : ""} · ${esc(o.courier)} · <code>${esc(o.tracking_number)}</code></div>` : ""}
+    else foot = `${o.status === "shipped" ? `<div class="done">✓ Dipos ${o.shipped_at ? fmtDate(o.shipped_at) : ""}${o.shipped_by ? " oleh " + esc(o.shipped_by) : ""} · ${esc(o.courier)} · <code>${esc(o.tracking_number)}</code></div>` : ""}
       <form class="ship" data-id="${o.id}">
         <select name="courier" required><option value="" disabled ${o.courier || LAST_COURIER ? "" : "selected"}>Pilih kurier</option>${opts}</select>
         <input name="tracking" placeholder="No. tracking" value="${esc(o.tracking_number || "")}" required minlength="6" autocomplete="off" autocapitalize="characters">
@@ -196,7 +204,7 @@ $("#list").addEventListener("submit", async (e) => {
   }
 });
 
-if (KEY) load().then(() => showApp(true)).catch(() => showApp(false));
+if (TOKEN) load().then(() => showApp(true)).catch(() => showApp(false));
 </script>
 </body>
 </html>

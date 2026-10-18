@@ -1,30 +1,52 @@
-// Staff order desk API — protected by STAFF_PASSWORD (sent as the x-staff-key header).
-// GET  /api/staff?status=paid|shipped|refunded|all  -> { orders: [...] }
-// POST /api/staff  { id, courier, tracking }         -> marks shipped + emails the customer their tracking
+// Staff order desk API — username + password login (accounts in the STAFF_USERS env var: "nik:pass1,staff:pass2").
+// POST /api/staff {action:"login", username, password}   -> { token, user }   (5 wrong tries = 15-minute lock)
+// GET  /api/staff?status=paid|shipped|refunded|all          -> { orders }       (Authorization: Bearer <token>)
+// POST /api/staff {action:"ship", id, courier, tracking}    -> marks shipped + emails the customer their tracking
 import crypto from "node:crypto";
 
 const SUPABASE_URL = (process.env.SUPABASE_URL || "").replace(/\/$/, "");
 const SUPABASE_KEY = process.env.SUPABASE_ANON_KEY;
 const ORDERS_SECRET = process.env.ORDERS_SECRET;
-const STAFF_PASSWORD = process.env.STAFF_PASSWORD || "";
+const STAFF_USERS = process.env.STAFF_USERS || "";
 const RESEND_KEY = process.env.RESEND_API_KEY;
 const EMAIL_FROM = process.env.EMAIL_FROM || "Gear 4 <orders@gear4.my>";
 const SUPPORT_EMAIL = process.env.SUPPORT_EMAIL || "";
+const TOKEN_DAYS = 30;
+const MAX_FAILS = 5;
 
 const COURIERS = ["J&T Express", "Pos Laju", "Ninja Van", "DHL eCommerce", "SPX Express", "City-Link", "Flash Express", "Lain-lain"];
 
 const json = (body, status = 200) =>
   new Response(JSON.stringify(body), { status, headers: { "Content-Type": "application/json", "Cache-Control": "no-store" } });
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
-function authorized(request) {
-  if (!STAFF_PASSWORD) return false;
-  const given = Buffer.from(request.headers.get("x-staff-key") || "");
-  const want = Buffer.from(STAFF_PASSWORD);
-  return given.length === want.length && crypto.timingSafeEqual(given, want);
+function users() {
+  const m = new Map();
+  for (const pair of STAFF_USERS.split(",")) {
+    const i = pair.indexOf(":");
+    if (i > 0) m.set(pair.slice(0, i).trim().toLowerCase(), pair.slice(i + 1).trim());
+  }
+  return m;
 }
-async function deny() {
-  await new Promise((r) => setTimeout(r, 700)); // slow down password guessing
-  return json({ error: "unauthorized" }, 401);
+const eq = (a, b) => { const x = Buffer.from(String(a)), y = Buffer.from(String(b)); return x.length === y.length && crypto.timingSafeEqual(x, y); };
+// Signing key changes whenever STAFF_USERS changes, so changing a password logs everyone out.
+const signKey = () => crypto.createHash("sha256").update(`${ORDERS_SECRET}|${STAFF_USERS}`).digest();
+const b64 = (buf) => Buffer.from(buf).toString("base64url");
+
+function makeToken(user) {
+  const body = b64(JSON.stringify({ u: user, exp: Date.now() + TOKEN_DAYS * 864e5 }));
+  return `${body}.${b64(crypto.createHmac("sha256", signKey()).update(body).digest())}`;
+}
+function readToken(request) {
+  const t = (request.headers.get("authorization") || "").replace(/^Bearer\s+/i, "");
+  const [body, sig] = t.split(".");
+  if (!body || !sig) return null;
+  if (!eq(sig, b64(crypto.createHmac("sha256", signKey()).update(body).digest()))) return null;
+  try {
+    const p = JSON.parse(Buffer.from(body, "base64url").toString());
+    if (!p.u || p.exp < Date.now() || !users().has(p.u)) return null;
+    return p.u;
+  } catch (_) { return null; }
 }
 
 async function rpc(fn, args) {
@@ -38,13 +60,27 @@ async function rpc(fn, args) {
   return t ? JSON.parse(t) : null;
 }
 
+async function login(b) {
+  const username = String(b.username || "").trim().toLowerCase().slice(0, 40);
+  const password = String(b.password || "");
+  if (!username || !password) return json({ error: "missing_fields" }, 400);
+  const fails = await rpc("panglima_login_attempt", { p_username: username, p_ok: null });
+  if (fails >= MAX_FAILS) return json({ error: "locked" }, 429);
+  const want = users().get(username);
+  const ok = want != null && eq(password, want);
+  await rpc("panglima_login_attempt", { p_username: username, p_ok: ok });
+  if (!ok) { await sleep(600); return json({ error: "unauthorized", left: Math.max(0, MAX_FAILS - fails - 1) }, 401); }
+  return json({ token: makeToken(username), user: username });
+}
+
 export async function GET(request) {
-  if (!authorized(request)) return deny();
+  const user = readToken(request);
+  if (!user) return json({ error: "unauthorized" }, 401);
   const status = new URL(request.url).searchParams.get("status") || "paid";
   if (!["paid", "shipped", "refunded", "all"].includes(status)) return json({ error: "bad_status" }, 400);
   try {
     const orders = await rpc("panglima_list_orders", { p_status: status, p_limit: 300 });
-    return json({ orders, couriers: COURIERS });
+    return json({ orders, couriers: COURIERS, user });
   } catch (e) {
     console.error("staff list failed", e.message);
     return json({ error: "server" }, 500);
@@ -52,16 +88,20 @@ export async function GET(request) {
 }
 
 export async function POST(request) {
-  if (!authorized(request)) return deny();
   let b = {};
   try { b = await request.json(); } catch (_) {}
+  if (b.action === "login") {
+    try { return await login(b); } catch (e) { console.error("login failed", e.message); return json({ error: "server" }, 500); }
+  }
+  const user = readToken(request);
+  if (!user) return json({ error: "unauthorized" }, 401);
   const id = Number(b.id);
   const courier = String(b.courier || "").slice(0, 60).trim();
   const tracking = String(b.tracking || "").replace(/\s+/g, "").slice(0, 60);
   if (!id || !courier || tracking.length < 6) return json({ error: "missing_fields" }, 400);
   let r;
   try {
-    r = await rpc("panglima_mark_shipped", { p_id: id, p_courier: courier, p_tracking: tracking });
+    r = await rpc("panglima_ship_order", { p_id: id, p_courier: courier, p_tracking: tracking, p_by: user });
   } catch (e) {
     const m = String(e.message || "");
     if (m.includes("not_shippable")) return json({ error: "not_shippable", detail: m.includes("refunded") ? "refunded" : "status" }, 409);
