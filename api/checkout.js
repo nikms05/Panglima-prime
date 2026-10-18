@@ -79,7 +79,7 @@ export async function POST(request) {
       },
     },
     metadata: { pack: String(pack.boxes), lang, ...utm },
-    payment_intent_data: { metadata: { pack: String(pack.boxes), lang }, statement_descriptor_suffix: "GEAR4" },
+    payment_intent_data: { metadata: { pack: String(pack.boxes), lang } },
     success_url: `${origin}/success.html?session_id={CHECKOUT_SESSION_ID}&lang=${lang}`,
     cancel_url: `${origin}/?lang=${lang}#pricing`,
     adaptive_pricing: { enabled: true }, // lets Malaysian buyers pay in MYR; you still settle in USD
