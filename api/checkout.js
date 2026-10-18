@@ -53,8 +53,8 @@ export async function POST(request) {
         unit_amount: pack.cents,
         product_data: {
           name: ms
-            ? `Panglima Prime Oral Strip — ${pack.boxes} kotak (${pack.boxes * 2} strip)`
-            : `Panglima Prime Oral Strip — ${pack.boxes} box${pack.boxes > 1 ? "es" : ""} (${pack.boxes * 2} strips)`,
+            ? `Gear 4 Oral Strip — ${pack.boxes} kotak (${pack.boxes * 2} strip)`
+            : `Gear 4 Oral Strip — ${pack.boxes} box${pack.boxes > 1 ? "es" : ""} (${pack.boxes * 2} strips)`,
           ...(PRODUCT_IMAGE ? { images: [PRODUCT_IMAGE] } : {}),
         },
       },
@@ -79,7 +79,7 @@ export async function POST(request) {
       },
     },
     metadata: { pack: String(pack.boxes), lang, ...utm },
-    payment_intent_data: { metadata: { pack: String(pack.boxes), lang }, statement_descriptor_suffix: "PANGLIMA" },
+    payment_intent_data: { metadata: { pack: String(pack.boxes), lang }, statement_descriptor_suffix: "GEAR4" },
     success_url: `${origin}/success.html?session_id={CHECKOUT_SESSION_ID}&lang=${lang}`,
     cancel_url: `${origin}/?lang=${lang}#pricing`,
     adaptive_pricing: { enabled: true }, // lets Malaysian buyers pay in MYR; you still settle in USD

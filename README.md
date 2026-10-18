@@ -1,4 +1,4 @@
-# Panglima Prime: Landing Page + Checkout Kad
+# Gear 4 (gear4.my): Landing Page + Checkout Kad
 
 Sistem jualan lengkap menggunakan akaun yang anda **sudah ada**: GitHub, Vercel, Supabase, Resend dan Stripe. Tiada langganan baru.
 
@@ -52,10 +52,10 @@ Pembeli → Landing page (Vercel) → Stripe Checkout (kad, RM atau USD) → Dui
 | `SUPABASE_ANON_KEY` | anon key (awam; tulisan dilindungi oleh `ORDERS_SECRET`) |
 | `ORDERS_SECRET` | rahsia dalam `private.app_secrets` (sudah diset) |
 | `RESEND_API_KEY` | dari Langkah 5 |
-| `EMAIL_FROM` | `Panglima Prime <orders@domainanda.com>` |
+| `EMAIL_FROM` | `Panglima Prime <orders@gear4.my>` |
 | `ORDER_NOTIFY_EMAIL` | e-mel anda untuk notifikasi order baru |
 | `SUPPORT_EMAIL` | e-mel support (pembeli boleh terus reply) |
-| `SITE_URL` | `https://domainanda.com` (atau URL vercel.app) |
+| `SITE_URL` | `https://gear4.my` (atau URL vercel.app) |
 | `PRODUCT_IMAGE_URL` | (pilihan) URL gambar kotak untuk paparan di checkout |
 
 4. **Deployments → Redeploy** supaya variable baru digunakan.
@@ -64,7 +64,7 @@ Pembeli → Landing page (Vercel) → Stripe Checkout (kad, RM atau USD) → Dui
 ## Langkah 4: Webhook Stripe
 
 1. Stripe → **Developers → Webhooks → Add endpoint**.
-2. URL: `https://domainanda.com/api/stripe-webhook`
+2. URL: `https://gear4.my/api/stripe-webhook`
 3. Events: `checkout.session.completed`, `checkout.session.async_payment_succeeded`, `charge.refunded`.
 4. Salin **Signing secret** (`whsec_...`) → masukkan ke `STRIPE_WEBHOOK_SECRET` di Vercel → Redeploy.
 
@@ -92,7 +92,7 @@ const TIKTOK_PIXEL_ID = "...";
 ```
 Event yang dihantar: PageView, ViewContent (pelawat sampai ke bahagian harga), InitiateCheckout (klik pakej), Purchase (pembayaran berjaya, dengan nilai dalam USD).
 
-Untuk iklan BM, gunakan link `https://domainanda.com/?lang=ms`. UTM dan fbclid/ttclid direkod bersama setiap order.
+Untuk iklan BM, gunakan link `https://gear4.my/?lang=ms`. UTM dan fbclid/ttclid direkod bersama setiap order.
 
 ---
 

@@ -13,7 +13,7 @@ const SUPABASE_URL = (process.env.SUPABASE_URL || "").replace(/\/$/, "");
 const SUPABASE_KEY = process.env.SUPABASE_ANON_KEY;          // public key; writes are guarded by ORDERS_SECRET
 const ORDERS_SECRET = process.env.ORDERS_SECRET;
 const RESEND_KEY = process.env.RESEND_API_KEY;
-const EMAIL_FROM = process.env.EMAIL_FROM || "Panglima Prime <orders@example.com>";
+const EMAIL_FROM = process.env.EMAIL_FROM || "Gear 4 <orders@gear4.my>";
 const NOTIFY_TO = process.env.ORDER_NOTIFY_EMAIL || "";
 const SUPPORT_EMAIL = process.env.SUPPORT_EMAIL || "";
 
@@ -138,7 +138,7 @@ function sendCustomerEmail(o) {
   const html = `<!doctype html><html><body style="margin:0;background:#F5F7F3;font-family:Arial,Helvetica,sans-serif;color:#16211C">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#F5F7F3;padding:24px 0"><tr><td align="center">
 <table role="presentation" width="560" cellpadding="0" cellspacing="0" style="max-width:560px;width:100%;background:#ffffff;border:1px solid #D3DBD2;border-radius:14px">
-<tr><td style="background:#12352B;color:#ffffff;padding:22px 28px;border-radius:14px 14px 0 0;font-family:Georgia,serif;font-size:22px">Panglima Prime</td></tr>
+<tr><td style="background:#12352B;color:#ffffff;padding:22px 28px;border-radius:14px 14px 0 0;font-family:Georgia,serif;font-size:22px">Gear 4</td></tr>
 <tr><td style="padding:28px">
 <p style="font-size:18px;margin:0 0 10px"><b>${t.hi}</b></p>
 <p style="font-size:15px;line-height:1.6;color:#5A6A62;margin:0 0 22px">${t.body}</p>
