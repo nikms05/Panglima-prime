@@ -85,7 +85,9 @@ button,input,select,.no,.pack,.logo,.login h1{font-family:Figtree,system-ui,sans
 
 <script>
 const $ = (s, el = document) => el.querySelector(s);
-let KEY = ""; try { KEY = sessionStorage.getItem("g4_staff") || ""; } catch (_) {}
+let KEY = ""; try { KEY = localStorage.getItem("g4_staff") || ""; } catch (_) {}
+// One-tap access link: gear4.my/staff.html#k=KEY  (the #part never reaches the server or logs)
+{ const m = location.hash.match(/k=([^&]+)/); if (m) { KEY = decodeURIComponent(m[1]); try { localStorage.setItem("g4_staff", KEY); } catch (_) {} history.replaceState(null, "", location.pathname); } }
 let STATUS = "paid", COURIERS = [], LAST_COURIER = "";
 try { LAST_COURIER = localStorage.getItem("g4_courier") || ""; } catch (_) {}
 
@@ -102,12 +104,12 @@ async function api(path, opts = {}) {
 }
 
 function showApp(on) { $("#login").hidden = on; $("#app").hidden = !on; $("#logout").hidden = !on; }
-function logout() { KEY = ""; try { sessionStorage.removeItem("g4_staff"); } catch (_) {} showApp(false); }
+function logout() { KEY = ""; try { localStorage.removeItem("g4_staff"); } catch (_) {} showApp(false); }
 
 $("#login").addEventListener("submit", async (e) => {
   e.preventDefault();
   KEY = $("#pw").value.trim(); $("#loginErr").textContent = ""; $("#loginBtn").disabled = true;
-  try { await load(); try { sessionStorage.setItem("g4_staff", KEY); } catch (_) {} showApp(true); }
+  try { await load(); try { localStorage.setItem("g4_staff", KEY); } catch (_) {} showApp(true); }
   catch (err) { $("#loginErr").textContent = err.message === "unauthorized" ? "Kata laluan salah." : "Ralat sambungan. Cuba lagi."; }
   finally { $("#loginBtn").disabled = false; }
 });
