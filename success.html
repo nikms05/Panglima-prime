@@ -45,9 +45,9 @@ const META_PIXEL_ID = "";    // same IDs as index.html
 const TIKTOK_PIXEL_ID = "";
 const T={
  en:{t:"Thank you. Your order is confirmed.",p:"A confirmation is on its way to your email.",n:"Order",
-     s1:"We pack your order in a plain parcel with no product name.",s2:"You'll get your tracking number by email when it ships.",s3:"Take 1 strip about 30 minutes before. No more than twice a week.",back:"Back to the store"},
+     s1:"We pack your order in a plain parcel with no product name.",s2:"You'll get your tracking number by email when it ships.",s3:"Take 1 strip about 15 minutes before. Follow the directions on the box.",back:"Back to the store"},
  ms:{t:"Terima kasih. Pesanan anda disahkan.",p:"E-mel pengesahan sedang dihantar kepada anda.",n:"Pesanan",
-     s1:"Kami bungkus pesanan anda dalam parcel biasa tanpa nama produk.",s2:"Nombor tracking akan dihantar melalui e-mel bila dipos.",s3:"Ambil 1 strip kira-kira 30 minit sebelum. Maksimum dua kali seminggu.",back:"Kembali ke kedai"}};
+     s1:"Kami bungkus pesanan anda dalam parcel biasa tanpa nama produk.",s2:"Nombor tracking akan dihantar melalui e-mel bila dipos.",s3:"Ambil 1 strip kira-kira 15 minit sebelum. Ikut arahan pada kotak.",back:"Kembali ke kedai"}};
 const q=new URLSearchParams(location.search), lang=q.get("lang")==="ms"?"ms":"en";
 document.documentElement.lang=lang;
 document.querySelectorAll("[data-i]").forEach(el=>el.textContent=T[lang][el.dataset.i]);
