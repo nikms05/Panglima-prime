@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="ms">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Gear 4 — Order Desk</title>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@800;900&family=Figtree:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#F3EBDD;--card:#fff;--ink:#15120E;--muted:#6B5F4F;--line:#DCCFB8;--gold:#C79A3E;--gold2:#E3B85C;--ok:#1F7A4D;--red:#B42318}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font:15px/1.5 Figtree,system-ui,sans-serif;min-height:100vh}
+header{background:var(--ink);color:#F3EBDD;padding:14px 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:5}
+.logo{font:900 24px "Big Shoulders Display",Impact,sans-serif;letter-spacing:.04em}
+.logo i{font-style:normal;color:var(--gold2)}
+header button{background:none;border:1px solid #4a3f2e;color:#E9E0CF;border-radius:999px;padding:6px 12px;font:600 13px Figtree;cursor:pointer}
+main{max-width:760px;margin:0 auto;padding:16px}
+.login{max-width:360px;margin:12vh auto 0;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:26px}
+.login h1{font:900 30px "Big Shoulders Display";text-transform:uppercase;margin-bottom:6px}
+.login p{color:var(--muted);font-size:14px;margin-bottom:16px}
+input,select{width:100%;font:16px Figtree;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:#fff;color:var(--ink)}
+input:focus,select:focus{outline:2px solid var(--gold);border-color:var(--gold)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;width:100%;margin-top:12px;background:var(--ink);color:#F2D387;border:0;border-radius:999px;padding:13px 18px;font:800 15px Figtree;cursor:pointer}
+.btn:disabled{opacity:.5;cursor:default}
+.err{color:var(--red);font-size:14px;margin-top:10px;min-height:1em}
+.tabs{display:flex;gap:6px;overflow-x:auto;margin-bottom:14px}
+.tab{flex:0 0 auto;border:1px solid var(--line);background:#fff;border-radius:999px;padding:8px 14px;font:700 14px Figtree;color:var(--muted);cursor:pointer}
+.tab.on{background:var(--ink);color:#F2D387;border-color:var(--ink)}
+.tab b{display:inline-block;min-width:20px;margin-left:4px;padding:0 6px;border-radius:999px;background:var(--gold2);color:var(--ink);font-size:12px}
+.bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;color:var(--muted);font-size:13px}
+.bar button{background:none;border:0;color:var(--ink);font:700 13px Figtree;text-decoration:underline;cursor:pointer}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:12px}
+.card.refunded{border-color:#F1B8B2;background:#FFF6F5}
+.top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.no{font:900 22px "Big Shoulders Display";letter-spacing:.03em}
+.date{color:var(--muted);font-size:13px}
+.pack{flex:0 0 auto;text-align:center;background:var(--ink);color:#F2D387;border-radius:12px;padding:6px 12px;font:900 26px/1 "Big Shoulders Display"}
+.pack small{display:block;font:700 11px Figtree;letter-spacing:.06em;color:#E9E0CF}
+.badge{display:inline-block;font:800 11px Figtree;letter-spacing:.06em;text-transform:uppercase;padding:3px 8px;border-radius:999px;margin-top:6px}
+.b-paid{background:#FFF1D6;color:#8A5A00}.b-shipped{background:#DFF3E8;color:var(--ok)}.b-refunded{background:#FDE2DF;color:var(--red)}
+.who{margin:12px 0 0;padding-top:12px;border-top:1px dashed var(--line)}
+.who .name{font-weight:800;font-size:16px}
+.who a{color:var(--ink)}
+.addr{white-space:pre-line;margin-top:4px}
+.row{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.chip{border:1px solid var(--line);background:#fff;border-radius:999px;padding:6px 12px;font:700 13px Figtree;cursor:pointer;color:var(--ink);text-decoration:none}
+.amt{color:var(--muted);font-size:13px;margin-top:8px}
+.ship{margin-top:14px;padding-top:14px;border-top:1px solid var(--line);display:grid;grid-template-columns:1fr 1.4fr;gap:8px}
+.ship .btn{grid-column:1/-1;margin-top:2px}
+.done{margin-top:12px;padding:10px 12px;border-radius:12px;background:#F2FAF5;color:var(--ok);font-size:14px}
+.done code{font:700 15px ui-monospace,monospace;color:var(--ink)}
+.stop{margin-top:12px;padding:10px 12px;border-radius:12px;background:var(--red);color:#fff;font-weight:800}
+.empty{text-align:center;color:var(--muted);padding:50px 10px}
+.toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:var(--ink);color:#F2D387;padding:10px 18px;border-radius:999px;font-weight:700;opacity:0;transition:.2s;pointer-events:none}
+.toast.show{opacity:1}
+[hidden]{display:none!important}
+button,input,select,.no,.pack,.logo,.login h1{font-family:Figtree,system-ui,sans-serif}
+.no,.pack,.logo,.login h1{font-family:"Big Shoulders Display",Impact,system-ui,sans-serif}
+@media(max-width:480px){.ship{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header><span class="logo">GEAR <i>4</i> · ORDERS</span><button id="logout" hidden>Log keluar</button></header>
+<main>
+  <form class="login" id="login">
+    <h1>Log masuk staff</h1>
+    <p>Masukkan kata laluan staff untuk lihat order.</p>
+    <input id="pw" type="password" autocomplete="current-password" placeholder="Kata laluan" required>
+    <button class="btn" id="loginBtn">Masuk</button>
+    <div class="err" id="loginErr"></div>
+  </form>
+
+  <section id="app" hidden>
+    <div class="tabs" id="tabs">
+      <button class="tab on" data-s="paid">Perlu pos <b id="c-paid">·</b></button>
+      <button class="tab" data-s="shipped">Dah pos</button>
+      <button class="tab" data-s="refunded">Refund / batal</button>
+      <button class="tab" data-s="all">Semua</button>
+    </div>
+    <div class="bar"><span id="info"></span><button id="refresh">Muat semula</button></div>
+    <div id="list"></div>
+  </section>
+</main>
+<div class="toast" id="toast"></div>
+
+<script>
+const $ = (s, el = document) => el.querySelector(s);
+let KEY = ""; try { KEY = sessionStorage.getItem("g4_staff") || ""; } catch (_) {}
+let STATUS = "paid", COURIERS = [], LAST_COURIER = "";
+try { LAST_COURIER = localStorage.getItem("g4_courier") || ""; } catch (_) {}
+
+const esc = (v) => String(v == null ? "" : v).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const toast = (m) => { const t = $("#toast"); t.textContent = m; t.classList.add("show"); setTimeout(() => t.classList.remove("show"), 2200); };
+const fmtDate = (s) => new Date(s).toLocaleString("ms-MY", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" });
+
+async function api(path, opts = {}) {
+  const r = await fetch(path, { ...opts, headers: { "Content-Type": "application/json", "x-staff-key": KEY, ...(opts.headers || {}) } });
+  if (r.status === 401) { logout(); throw new Error("unauthorized"); }
+  const j = await r.json().catch(() => ({}));
+  if (!r.ok) throw Object.assign(new Error(j.error || "error"), { body: j });
+  return j;
+}
+
+function showApp(on) { $("#login").hidden = on; $("#app").hidden = !on; $("#logout").hidden = !on; }
+function logout() { KEY = ""; try { sessionStorage.removeItem("g4_staff"); } catch (_) {} showApp(false); }
+
+$("#login").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  KEY = $("#pw").value.trim(); $("#loginErr").textContent = ""; $("#loginBtn").disabled = true;
+  try { await load(); try { sessionStorage.setItem("g4_staff", KEY); } catch (_) {} showApp(true); }
+  catch (err) { $("#loginErr").textContent = err.message === "unauthorized" ? "Kata laluan salah." : "Ralat sambungan. Cuba lagi."; }
+  finally { $("#loginBtn").disabled = false; }
+});
+$("#logout").onclick = logout;
+$("#refresh").onclick = () => load().catch(() => toast("Gagal muat semula"));
+$("#tabs").addEventListener("click", (e) => {
+  const b = e.target.closest(".tab"); if (!b) return;
+  document.querySelectorAll(".tab").forEach((t) => t.classList.toggle("on", t === b));
+  STATUS = b.dataset.s; load().catch(() => {});
+});
+
+async function load() {
+  $("#info").textContent = "Memuatkan…";
+  const j = await api("/api/staff?status=" + STATUS);
+  COURIERS = j.couriers || COURIERS;
+  render(j.orders || []);
+  if (STATUS === "paid") $("#c-paid").textContent = j.orders.length;
+}
+
+function addrText(o) {
+  return [o.customer_name, o.phone, o.address_line1, o.address_line2, [o.postcode, o.city].filter(Boolean).join(" "), o.state, o.country === "MY" ? "Malaysia" : o.country].filter(Boolean).join("\n");
+}
+
+function render(orders) {
+  const boxes = orders.reduce((n, o) => n + (o.pack_boxes || 0), 0);
+  $("#info").textContent = orders.length ? `${orders.length} order · ${boxes} kotak` : "";
+  if (!orders.length) {
+    $("#list").innerHTML = `<div class="empty">${STATUS === "paid" ? "Tiada order perlu dipos. 🎉" : "Tiada order."}</div>`;
+    return;
+  }
+  $("#list").innerHTML = orders.map((o) => {
+    const addr = [o.address_line1, o.address_line2, [o.postcode, o.city].filter(Boolean).join(" "), o.state].filter(Boolean).map(esc).join("\n");
+    const opts = COURIERS.map((c) => `<option ${c === (o.courier || LAST_COURIER) ? "selected" : ""}>${esc(c)}</option>`).join("");
+    const tel = (o.phone || "").replace(/[^\d+]/g, "");
+    let foot = "";
+    if (o.status === "refunded") foot = `<div class="stop">⛔ DAH REFUND — JANGAN POS</div>`;
+    else foot = `${o.status === "shipped" ? `<div class="done">✓ Dipos ${o.shipped_at ? fmtDate(o.shipped_at) : ""} · ${esc(o.courier)} · <code>${esc(o.tracking_number)}</code></div>` : ""}
+      <form class="ship" data-id="${o.id}">
+        <select name="courier" required><option value="" disabled ${o.courier || LAST_COURIER ? "" : "selected"}>Pilih kurier</option>${opts}</select>
+        <input name="tracking" placeholder="No. tracking" value="${esc(o.tracking_number || "")}" required minlength="6" autocomplete="off" autocapitalize="characters">
+        <button class="btn">${o.status === "shipped" ? "Kemas kini tracking" : "✓ Dah pos — hantar tracking"}</button>
+      </form>`;
+    return `<article class="card ${o.status}">
+      <div class="top">
+        <div><div class="no">#${esc(o.order_no)}</div><div class="date">${fmtDate(o.created_at)}</div>
+          <span class="badge b-${o.status}">${{ paid: "Perlu pos", shipped: "Dah pos", refunded: "Refund" }[o.status] || esc(o.status)}</span></div>
+        <div class="pack">${o.pack_boxes}<small>KOTAK</small></div>
+      </div>
+      <div class="who">
+        <div class="name">${esc(o.customer_name)}</div>
+        ${o.phone ? `<a href="tel:${esc(tel)}">${esc(o.phone)}</a>` : ""}
+        <div class="addr">${addr}</div>
+        <div class="row">
+          <button class="chip" data-copy="${esc(addrText(o))}">Salin alamat</button>
+          ${tel ? `<a class="chip" href="https://wa.me/${esc(tel.replace(/^\+/, ""))}" target="_blank" rel="noopener">WhatsApp</a>` : ""}
+        </div>
+        <div class="amt">${esc(o.currency_paid)} ${Number(o.amount_paid || 0).toFixed(2)} · ${esc(o.email || "")}</div>
+      </div>
+      ${foot}
+    </article>`;
+  }).join("");
+}
+
+$("#list").addEventListener("click", async (e) => {
+  const c = e.target.closest("[data-copy]"); if (!c) return;
+  try { await navigator.clipboard.writeText(c.dataset.copy); toast("Alamat disalin"); } catch (_) { toast("Tak dapat salin"); }
+});
+
+$("#list").addEventListener("submit", async (e) => {
+  const f = e.target.closest("form.ship"); if (!f) return;
+  e.preventDefault();
+  const btn = $("button", f); btn.disabled = true; const label = btn.textContent; btn.textContent = "Menyimpan…";
+  const courier = f.courier.value, tracking = f.tracking.value.trim();
+  try {
+    const r = await api("/api/staff", { method: "POST", body: JSON.stringify({ id: f.dataset.id, courier, tracking }) });
+    LAST_COURIER = courier; try { localStorage.setItem("g4_courier", courier); } catch (_) {}
+    toast(r.emailed ? "Disimpan · tracking diemel ke pelanggan" : "Disimpan");
+    await load();
+  } catch (err) {
+    const d = err.body || {};
+    toast(d.detail === "refunded" ? "⛔ Order ini dah refund — jangan pos" : d.error === "missing_fields" ? "Isi kurier & no. tracking" : "Gagal simpan, cuba lagi");
+    btn.disabled = false; btn.textContent = label;
+    if (d.detail === "refunded") load().catch(() => {});
+  }
+});
+
+if (KEY) load().then(() => showApp(true)).catch(() => showApp(false));
+</script>
+</body>
+</html>

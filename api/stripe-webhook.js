@@ -193,23 +193,23 @@ function sendCustomerEmail(o) {
     help: "Questions? Just reply to this email.",
   };
   const addr = [o.address_line1, o.address_line2, [o.postcode, o.city].filter(Boolean).join(" "), o.state].filter(Boolean).map(esc).join("<br>");
-  const html = `<!doctype html><html><body style="margin:0;background:#F5F7F3;font-family:Arial,Helvetica,sans-serif;color:#16211C">
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#F5F7F3;padding:24px 0"><tr><td align="center">
-<table role="presentation" width="560" cellpadding="0" cellspacing="0" style="max-width:560px;width:100%;background:#ffffff;border:1px solid #D3DBD2;border-radius:14px">
-<tr><td style="background:#12352B;color:#ffffff;padding:22px 28px;border-radius:14px 14px 0 0;font-family:Georgia,serif;font-size:22px">Gear 4</td></tr>
+  const html = `<!doctype html><html><body style="margin:0;background:#F3EBDD;font-family:Arial,Helvetica,sans-serif;color:#15120E">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#F3EBDD;padding:24px 0"><tr><td align="center">
+<table role="presentation" width="560" cellpadding="0" cellspacing="0" style="max-width:560px;width:100%;background:#ffffff;border:1px solid #DCCFB8;border-radius:14px">
+<tr><td style="background:#15120E;color:#F3EBDD;padding:20px 28px;border-radius:14px 14px 0 0;font-size:22px;font-weight:900;letter-spacing:1px">GEAR <span style="color:#E3B85C">4</span></td></tr>
 <tr><td style="padding:28px">
 <p style="font-size:18px;margin:0 0 10px"><b>${t.hi}</b></p>
-<p style="font-size:15px;line-height:1.6;color:#5A6A62;margin:0 0 22px">${t.body}</p>
+<p style="font-size:15px;line-height:1.6;color:#6B5F4F;margin:0 0 22px">${t.body}</p>
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="font-size:15px">
-<tr><td style="padding:8px 0;color:#5A6A62">${t.order}</td><td align="right" style="padding:8px 0"><b>#${shortId(o)}</b></td></tr>
-<tr><td style="padding:8px 0;color:#5A6A62;border-top:1px solid #E4EAE3">${t.pkg}</td><td align="right" style="padding:8px 0;border-top:1px solid #E4EAE3">${t.boxes}</td></tr>
-<tr><td style="padding:8px 0;color:#5A6A62;border-top:1px solid #E4EAE3">${t.paid}</td><td align="right" style="padding:8px 0;border-top:1px solid #E4EAE3"><b>${money(o)}</b></td></tr>
-<tr><td style="padding:8px 0;color:#5A6A62;border-top:1px solid #E4EAE3;vertical-align:top">${t.to}</td><td align="right" style="padding:8px 0;border-top:1px solid #E4EAE3">${addr}</td></tr>
+<tr><td style="padding:8px 0;color:#6B5F4F">${t.order}</td><td align="right" style="padding:8px 0"><b>#${shortId(o)}</b></td></tr>
+<tr><td style="padding:8px 0;color:#6B5F4F;border-top:1px solid #EFE6D6">${t.pkg}</td><td align="right" style="padding:8px 0;border-top:1px solid #EFE6D6">${t.boxes}</td></tr>
+<tr><td style="padding:8px 0;color:#6B5F4F;border-top:1px solid #EFE6D6">${t.paid}</td><td align="right" style="padding:8px 0;border-top:1px solid #EFE6D6"><b>${money(o)}</b></td></tr>
+<tr><td style="padding:8px 0;color:#6B5F4F;border-top:1px solid #EFE6D6;vertical-align:top">${t.to}</td><td align="right" style="padding:8px 0;border-top:1px solid #EFE6D6">${addr}</td></tr>
 </table>
-<p style="font-size:14px;line-height:1.6;color:#5A6A62;background:#F5F7F3;border-radius:10px;padding:14px 16px;margin:22px 0 0">${t.use}</p>
-<p style="font-size:14px;color:#5A6A62;margin:18px 0 0">${t.help}</p>
+<p style="font-size:14px;line-height:1.6;color:#6B5F4F;background:#F8F3EA;border-radius:10px;padding:14px 16px;margin:22px 0 0">${t.use}</p>
+<p style="font-size:14px;color:#6B5F4F;margin:18px 0 0">${t.help}</p>
 </td></tr>
-<tr><td style="padding:16px 28px;border-top:1px solid #E4EAE3;font-size:12px;color:#8A988F">Rimba Botanicals LLC · 30 N Gould St Ste R, Sheridan, WY 82801, USA</td></tr>
+<tr><td style="padding:16px 28px;border-top:1px solid #EFE6D6;font-size:12px;color:#8A7F6E">Rimba Botanicals LLC · 30 N Gould St Ste R, Sheridan, WY 82801, USA</td></tr>
 </table></td></tr></table></body></html>`;
   return resend({ from: EMAIL_FROM, to: [o.email], subject: t.subject, html, ...(SUPPORT_EMAIL ? { reply_to: SUPPORT_EMAIL } : {}) });
 }
