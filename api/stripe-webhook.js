@@ -193,7 +193,7 @@ function sendCustomerEmail(o) {
     hi: `Terima kasih${o.customer_name ? ", " + esc(o.customer_name.split(" ")[0]) : ""}.`,
     body: "Pembayaran anda telah diterima. Kami akan pos pesanan anda dalam parcel biasa tanpa nama produk, dan hantar nombor tracking melalui e-mel sebaik sahaja dipos.",
     order: "Pesanan", pkg: "Pakej", paid: "Dibayar", to: "Dihantar ke",
-    boxes: `${o.pack_boxes} kotak (${o.pack_boxes * 2} strip)`,
+    boxes: `${o.pack_boxes} kotak (${o.pack_boxes * 4} strip)`,
     use: "Cara guna: letak 1 strip di lidah kira-kira 30 minit sebelum dan biar larut. Maksimum dua kali seminggu. Bukan untuk bawah 18 tahun atau yang ada masalah jantung.",
     help: "Ada soalan? Balas e-mel ini.",
   } : {
@@ -201,7 +201,7 @@ function sendCustomerEmail(o) {
     hi: `Thank you${o.customer_name ? ", " + esc(o.customer_name.split(" ")[0]) : ""}.`,
     body: "Your payment has been received. We'll ship your order in a plain parcel with no product name and email your tracking number as soon as it ships.",
     order: "Order", pkg: "Package", paid: "Paid", to: "Shipping to",
-    boxes: `${o.pack_boxes} box${o.pack_boxes > 1 ? "es" : ""} (${o.pack_boxes * 2} strips)`,
+    boxes: `${o.pack_boxes} box${o.pack_boxes > 1 ? "es" : ""} (${o.pack_boxes * 4} strips)`,
     use: "How to use: place 1 strip on your tongue about 30 minutes before and let it dissolve. No more than twice a week. Not for anyone under 18 or with a heart condition.",
     help: "Questions? Just reply to this email.",
   };

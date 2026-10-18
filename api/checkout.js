@@ -53,8 +53,8 @@ export async function POST(request) {
         unit_amount: pack.cents,
         product_data: {
           name: ms
-            ? `Gear 4 Oral Strip — ${pack.boxes} kotak (${pack.boxes * 2} strip)`
-            : `Gear 4 Oral Strip — ${pack.boxes} box${pack.boxes > 1 ? "es" : ""} (${pack.boxes * 2} strips)`,
+            ? `Gear 4 Oral Strip — ${pack.boxes} kotak (${pack.boxes * 4} strip)`
+            : `Gear 4 Oral Strip — ${pack.boxes} box${pack.boxes > 1 ? "es" : ""} (${pack.boxes * 4} strips)`,
           ...(PRODUCT_IMAGE ? { images: [PRODUCT_IMAGE] } : {}),
         },
       },
