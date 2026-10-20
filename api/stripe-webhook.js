@@ -143,11 +143,15 @@ async function handleRefund(stripe, ch, eventId) {
 // What Stripe actually settles in USD (the order is charged in RM and converted by Stripe).
 async function usdAmount(s, piId) {
   if (s.currency === "usd") return s.amount_total / 100;
-  try {
-    const pi = await getStripe().paymentIntents.retrieve(piId, { expand: ["latest_charge.balance_transaction"] });
-    const bt = pi.latest_charge && pi.latest_charge.balance_transaction;
-    if (bt && bt.currency === "usd") return bt.amount / 100;
-  } catch (e) { console.warn("usd amount lookup failed:", e.message); }
+  for (let attempt = 0; attempt < 3; attempt++) {
+    try {
+      const pi = await getStripe().paymentIntents.retrieve(piId, { expand: ["latest_charge.balance_transaction"] });
+      const bt = pi.latest_charge && pi.latest_charge.balance_transaction;
+      if (bt && typeof bt === "object" && bt.currency === "usd") return bt.amount / 100;
+      console.warn("usd amount not ready", { attempt, bt: bt && (typeof bt === "string" ? bt : bt.currency) });
+    } catch (e) { console.warn("usd amount lookup failed:", e.message); }
+    await new Promise((r) => setTimeout(r, 1500));
+  }
   return null;
 }
 
