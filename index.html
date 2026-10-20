@@ -713,7 +713,7 @@ async function goCheckout(btn){
   const pack = +btn.dataset.checkout;
   btn.parentNode.querySelectorAll(".btn-err").forEach(x => x.remove());
   btn.setAttribute("aria-busy", "true");
-  track("InitiateCheckout", { content_name:"Gear 4", currency:"MYR", value:PACKS[pack].rm, num_items:pack });
+  track("InitiateCheckout", { content_name:"Gear 4", content_type:"product", content_ids:["gear4-"+pack+"box"], contents:[{id:"gear4-"+pack+"box", quantity:1}], currency:"MYR", value:PACKS[pack].rm, num_items:pack });
   try{
     const qs = new URLSearchParams(location.search);
     const utm = {};
@@ -762,7 +762,7 @@ if(TIKTOK_PIXEL_ID){
   !function(w,d,t){w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];ttq.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie"];ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}};for(var i=0;i<ttq.methods.length;i++)ttq.setAndDefer(ttq,ttq.methods[i]);ttq.load=function(e){var n="https://analytics.tiktok.com/i18n/pixel/events.js";ttq._i=ttq._i||{};ttq._i[e]=[];ttq._i[e]._u=n;ttq._t=ttq._t||{};ttq._t[e]=+new Date;var o=document.createElement("script");o.type="text/javascript";o.async=!0;o.src=n+"?sdkid="+e+"&lib="+t;var a=document.getElementsByTagName("script")[0];a.parentNode.insertBefore(o,a)};ttq.load(TIKTOK_PIXEL_ID);ttq.page()}(window,document,"ttq");
 }
 const pr = document.getElementById("pricing"); let vc = false;
-if("IntersectionObserver" in window){ new IntersectionObserver((es,o)=>{ es.forEach(e=>{ if(e.isIntersecting && !vc){ vc=true; track("ViewContent",{content_name:"Gear 4",currency:"MYR",value:79}); o.disconnect(); } }); },{threshold:.3}).observe(pr); }
+if("IntersectionObserver" in window){ new IntersectionObserver((es,o)=>{ es.forEach(e=>{ if(e.isIntersecting && !vc){ vc=true; track("ViewContent",{content_name:"Gear 4",content_type:"product",content_ids:["gear4-2box","gear4-4box","gear4-6box"],currency:"MYR",value:79}); o.disconnect(); } }); },{threshold:.3}).observe(pr); }
 
 /* ===== init ===== */
 document.getElementById("yr").textContent = new Date().getFullYear();
